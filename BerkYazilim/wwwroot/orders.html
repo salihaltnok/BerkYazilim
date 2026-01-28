@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siparişlerim - B2B Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --purple: #8b5cf6;
+            --dark: #0a0e1a;
+            --dark-light: #141824;
+            --dark-lighter: #1e2330;
+            --glass-bg: rgba(255,255,255,0.02);
+            --glass-border: rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter',sans-serif;
+            background: var(--dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* STANDART SIDEBAR STİLLERİ (Diğer sayfalarla birebir aynı) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark-light);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            padding: 0 24px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+            .menu-section:first-child {
+                margin-top: 0;
+            }
+
+        /* KAYMA SORUNU ÇÖZÜMÜ */
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent; /* Sabit genişlik */
+        }
+
+            .menu-item:hover {
+                background: var(--glass-bg);
+                color: #fff;
+            }
+
+            .menu-item.active {
+                background: rgba(59,130,246,0.1);
+                color: var(--primary);
+                border-left: 3px solid var(--primary); /* Sadece renk değişir */
+            }
+
+        .menu-icon {
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        /* İkon sıkışmasın */
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,var(--primary),var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+            .stat-icon.blue {
+                background: rgba(59,130,246,0.2);
+                color: var(--primary);
+            }
+
+            .stat-icon.green {
+                background: rgba(16,185,129,0.2);
+                color: var(--success);
+            }
+
+            .stat-icon.yellow {
+                background: rgba(245,158,11,0.2);
+                color: var(--warning);
+            }
+
+            .stat-icon.purple {
+                background: rgba(139,92,246,0.2);
+                color: var(--purple);
+            }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        /* FILTERS */
+        .filters-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-select {
+            height: 44px;
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            padding: 0 16px;
+            font-size: 14px;
+            min-width: 160px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+        }
+
+            .search-box input {
+                width: 100%;
+                height: 44px;
+                background: var(--dark-light);
+                border: 1px solid var(--glass-border);
+                border-radius: 10px;
+                padding: 0 16px 0 44px;
+                color: #fff;
+                font-size: 14px;
+            }
+
+            .search-box i {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #64748b;
+            }
+
+        /* ORDERS TABLE */
+        .orders-container {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .orders-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .orders-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .orders-title i {
+                color: var(--primary);
+            }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .orders-table th {
+                text-align: left;
+                padding: 16px 24px;
+                font-size: 12px;
+                font-weight: 600;
+                color: #94a3b8;
+                text-transform: uppercase;
+                background: var(--glass-bg);
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .orders-table td {
+                padding: 20px 24px;
+                border-bottom: 1px solid var(--glass-border);
+                vertical-align: middle;
+            }
+
+            .orders-table tr:hover {
+                background: var(--glass-bg);
+            }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .order-date {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .order-items {
+            font-size: 13px;
+        }
+
+        .order-items-count {
+            font-weight: 600;
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .status-badge i {
+                font-size: 10px;
+            }
+
+        .status-pending {
+            background: rgba(245,158,11,0.2);
+            color: var(--warning);
+        }
+
+        .status-processing {
+            background: rgba(59,130,246,0.2);
+            color: var(--primary);
+        }
+
+        .status-shipped {
+            background: rgba(139,92,246,0.2);
+            color: var(--purple);
+        }
+
+        .status-delivered {
+            background: rgba(16,185,129,0.2);
+            color: var(--success);
+        }
+
+        .status-cancelled {
+            background: rgba(239,68,68,0.2);
+            color: var(--danger);
+        }
+
+        .order-total {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: #fff;
+        }
+
+            .btn-outline:hover {
+                background: var(--glass-border);
+            }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+            .action-btn.track {
+                background: rgba(139,92,246,0.1);
+                color: var(--purple);
+            }
+
+                .action-btn.track:hover {
+                    background: var(--purple);
+                    color: #fff;
+                }
+
+            .action-btn.invoice {
+                background: rgba(16,185,129,0.1);
+                color: var(--success);
+            }
+
+                .action-btn.invoice:hover {
+                    background: var(--success);
+                    color: #fff;
+                }
+
+        /* ORDER DETAIL MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+            .modal-overlay.show {
+                display: flex;
+            }
+
+        .modal {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-bg);
+            border: none;
+            border-radius: 10px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: calc(90vh - 140px);
+            overflow-y: auto;
+        }
+
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .info-label {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* MODAL TABLE */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+            .data-table th {
+                text-align: left;
+                padding: 16px;
+                color: #94a3b8;
+                font-weight: 600;
+                font-size: 12px;
+                text-transform: uppercase;
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .data-table td {
+                padding: 16px;
+                border-bottom: 1px solid var(--glass-border);
+                vertical-align: middle;
+                color: #fff;
+            }
+
+        .product-cell {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .product-img-small {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--dark-lighter);
+            border: 1px solid var(--glass-border);
+        }
+
+        .order-summary {
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+            .summary-row.total {
+                border-top: 1px solid var(--glass-border);
+                padding-top: 12px;
+                margin-top: 12px;
+                margin-bottom: 0;
+                color: #fff;
+                font-weight: 700;
+                font-size: 18px;
+            }
+
+                .summary-row.total span:last-child {
+                    color: var(--primary);
+                }
+
+        /* TOAST */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 32px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: all 0.4s;
+            opacity: 0;
+        }
+
+            .toast.show {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            .toast.success {
+                border-left: 4px solid var(--success);
+            }
+
+            .toast.error {
+                border-left: 4px solid var(--danger);
+            }
+
+            .toast.info {
+                border-left: 4px solid var(--primary);
+            }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">B2B Portal</div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section">Ana Menü</div>
+            <a href="dashboard.html" class="menu-item"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box menu-icon"></i><span>Ürünler</span></a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span></a>
+
+            <div class="menu-section">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item active"><i class="fas fa-file-invoice menu-icon"></i><span>Siparişlerim</span></a>
+            <a href="tracking.html" class="menu-item"><i class="fas fa-truck menu-icon"></i><span>Kargo Takip</span></a>
+
+            <div class="menu-section">Finans</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet menu-icon"></i><span>Cari Hesap</span></a>
+            <a href="reports.html" class="menu-item"><i class="fas fa-chart-line menu-icon"></i><span>Raporlar</span></a>
+
+            <div class="menu-section">Destek & Hesap</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools menu-icon"></i><span>Teknik Servis</span></a>
+            <a href="support.html" class="menu-item"><i class="fas fa-headset menu-icon"></i><span>Canlı Destek</span></a>
+            <a href="profile.html" class="menu-item"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
+
+            <a href="login.html" class="menu-item" style="margin-top:auto; color:#ef4444;" onclick="localStorage.clear()">
+                <i class="fas fa-sign-out-alt menu-icon"></i><span>Çıkış Yap</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" style="background:linear-gradient(135deg,#3b82f6,#10b981);">BY</div>
+                <div class="user-details">
+                    <div class="user-name">BERK YAZILIM</div>
+                    <div class="user-role">BAYI-2025-001</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="toast-container" id="toastContainer"></div>
+
+        <div class="page-header">
+            <h1 class="page-title">Siparişlerim</h1>
+            <p class="page-subtitle">Tüm siparişlerinizi görüntüleyin ve takip edin</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-shopping-bag"></i></div>
+                <div class="stat-value" id="statTotal">...</div>
+                <div class="stat-label">Toplam Sipariş</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="statPending">...</div>
+                <div class="stat-label">Bekleyen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-truck"></i></div>
+                <div class="stat-value" id="statShipped">...</div>
+                <div class="stat-label">Kargoda</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value" id="statCompleted">...</div>
+                <div class="stat-label">Tamamlanan</div>
+            </div>
+        </div>
+
+        <div class="filters-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Sipariş no veya ürün ara..." id="searchInput">
+            </div>
+            <div class="filter-group">
+                <select class="filter-select" id="statusFilter">
+                    <option value="">Tüm Durumlar</option>
+                    <option value="pending">Beklemede</option>
+                    <option value="processing">Hazırlanıyor</option>
+                    <option value="shipped">Kargoda</option>
+                    <option value="delivered">Teslim Edildi</option>
+                    <option value="cancelled">İptal</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <select class="filter-select" id="dateFilter">
+                    <option value="">Tüm Tarihler</option>
+                    <option value="7">Son 7 Gün</option>
+                    <option value="30">Son 30 Gün</option>
+                    <option value="90">Son 3 Ay</option>
+                    <option value="365">Son 1 Yıl</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <select class="filter-select" id="sortFilter">
+                    <option value="newest">En Yeni</option>
+                    <option value="oldest">En Eski</option>
+                    <option value="highest">En Yüksek Tutar</option>
+                    <option value="lowest">En Düşük Tutar</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="orders-container">
+            <div class="orders-header">
+                <h3 class="orders-title"><i class="fas fa-list"></i> Sipariş Listesi</h3>
+            </div>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Sipariş No</th>
+                        <th>Tarih</th>
+                        <th>Ürünler</th>
+                        <th>Durum</th>
+                        <th>Tutar</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Sipariş Detayı - <span id="modalOrderNumber">...</span></h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="order-info-grid">
+                    <div>
+                        <div class="info-label">Sipariş Tarihi</div>
+                        <div class="info-value" id="modalOrderDate">...</div>
+                    </div>
+                    <div>
+                        <div class="info-label">Durum</div>
+                        <div class="info-value"><span class="status-badge status-pending" id="modalOrderStatus">...</span></div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top:20px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ürün</th>
+                                <th style="text-align:center">Adet</th>
+                                <th style="text-align:right">Birim Fiyat</th>
+                                <th style="text-align:right">Toplam</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalOrderItems">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Ara Toplam</span>
+                        <span id="modalSubTotal">...</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>KDV (%20)</span>
+                        <span id="modalTax">...</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Genel Toplam</span>
+                        <span id="modalTotal">...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- GLOBAL DEĞİŞKENLER ---
+        let orders = [];
+
+        // --- YARDIMCI FORMAT FONKSİYONLARI ---
+        function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(p); }
+        function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' }); }
+
+        // --- DURUM HARİTASI ---
+        const statusMap = {
+            pending: { label: 'Beklemede', class: 'status-pending', icon: 'fa-clock' },
+            processing: { label: 'Hazırlanıyor', class: 'status-processing', icon: 'fa-cog' },
+            shipped: { label: 'Kargoda', class: 'status-shipped', icon: 'fa-truck' },
+            delivered: { label: 'Teslim Edildi', class: 'status-delivered', icon: 'fa-check' },
+            cancelled: { label: 'İptal Edildi', class: 'status-cancelled', icon: 'fa-times' }
+        };
+
+        // --- 1. VERİLERİ ÇEKME FONKSİYONU ---
+        async function fetchOrders() {
+            try {
+                const response = await fetch('/api/orders');
+                if (!response.ok) throw new Error('Siparişler çekilemedi');
+
+                orders = await response.json();
+
+                // Veriler gelince filtreleri uygula ve tabloyu çiz
+                applyFilters();
+                updateStats();
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('ordersTableBody').innerHTML =
+                    '<tr><td colspan="6" style="text-align:center;padding:20px;color:red;">Siparişler yüklenirken hata oluştu.</td></tr>';
+            }
+        }
+
+        // --- 2. SİPARİŞLERİ LİSTELEME (RENDER) ---
+        function renderOrders(filteredOrders) {
+            const tbody = document.getElementById('ordersTableBody');
+
+            if (!filteredOrders || filteredOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#64748b;"><i class="fas fa-inbox" style="font-size:48px;margin-bottom:16px;display:block;"></i>Sipariş bulunamadı</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredOrders.map(order => {
+                // Güvenlik kontrolü: statusMap içinde bu durum var mı? Yoksa varsayılan pending yap.
+                const statusKey = order.status && statusMap[order.status] ? order.status : 'pending';
+                const status = statusMap[statusKey];
+
+                // item null gelirse boş dizi ata
+                const items = order.items || [];
+                const itemsPreview = items.slice(0, 2).map(i => i.name).join(', ') + (items.length > 2 ? ` +${items.length - 2}` : '');
+
+                return `
+                        <tr>
+                            <td><span class="order-id">${order.id}</span></td>
+                            <td><span class="order-date">${formatDate(order.date)}</span></td>
+                            <td><div class="order-items"><span class="order-items-count">${items.length} ürün</span><br><small style="color:#64748b;">${itemsPreview}</small></div></td>
+                            <td><span class="status-badge ${status.class}"><i class="fas ${status.icon}"></i> ${status.label}</span></td>
+                            <td><span class="order-total">₺${formatPrice(order.total)}</span></td>
+                            <td>
+                                <div class="order-actions">
+                                    <button class="btn-sm btn-outline" onclick="viewOrderDetails('${order.id}')">
+                                        <i class="far fa-eye"></i> Detay
+                                    </button>
+                                    ${order.trackingNo ? `<button class="action-btn track" title="Kargo Takip" onclick="trackOrder('${order.trackingNo}')"><i class="fas fa-map-marker-alt"></i></button>` : ''}
+                                    <button class="action-btn invoice" title="Fatura" onclick="downloadInvoice('${order.id}')"><i class="fas fa-file-pdf"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+            }).join('');
+        }
+
+        async function viewOrderDetails(orderNumber) {
+            if (!orderNumber) return;
+
+            try {
+                const response = await fetch(`/api/orders/detail/${orderNumber}`);
+                if (!response.ok) throw new Error('Detay çekilemedi');
+
+                const order = await response.json();
+
+                // --- Başlık ve Üst Bilgiler ---
+                document.getElementById('modalOrderNumber').textContent = order.orderNumber;
+                document.getElementById('modalOrderDate').textContent = new Date(order.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                // Durum Rengi
+                const statusEl = document.getElementById('modalOrderStatus');
+                const statusKey = order.status ? order.status.toLowerCase() : 'pending';
+                const statusInfo = statusMap[statusKey] || statusMap['pending'];
+
+                statusEl.textContent = statusInfo.label;
+                statusEl.className = `status-badge ${statusInfo.class}`;
+
+                // --- Tabloyu Doldur ---
+                const itemsContainer = document.getElementById('modalOrderItems');
+
+                itemsContainer.innerHTML = order.items.map(item => {
+                    const imgUrl = item.image || 'https://via.placeholder.com/100x100?text=Ürün';
+                    return `
+                            <tr>
+                                <td style="width: 50%;">
+                                    <div class="product-cell">
+                                        <img src="${imgUrl}" class="product-img-small" alt="${item.productName}">
+                                        <div class="product-info-compact">
+                                            <div>${item.productName}</div>
+                                            <div>Birim Fiyat: ₺${formatPrice(item.unitPrice)}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align:center; color: #fff;">${item.quantity} Adet</td>
+                                <td style="text-align:right; font-weight: 600; color: var(--primary);">
+                                    ₺${formatPrice(item.total)}
+                                </td>
+                            </tr>
+                        `;
+                }).join('');
+
+                // --- Alt Toplamlar ---
+                const subTotal = order.totalAmount / 1.20;
+                const tax = order.totalAmount - subTotal;
+
+                document.getElementById('modalSubTotal').textContent = '₺' + formatPrice(subTotal);
+                document.getElementById('modalTax').textContent = '₺' + formatPrice(tax);
+                document.getElementById('modalTotal').textContent = '₺' + formatPrice(order.totalAmount);
+
+                document.getElementById('orderModal').classList.add('show');
+
+            } catch (error) {
+                console.error(error);
+                showToast('Hata', 'Sipariş detayları yüklenirken hata oluştu.', 'error');
+            }
+        }
+
+        // --- FİLTRELEME ---
+        function applyFilters() {
+            let filtered = [...orders];
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const days = parseInt(document.getElementById('dateFilter').value);
+            const sort = document.getElementById('sortFilter').value;
+
+            if (search) filtered = filtered.filter(o => o.id.toLowerCase().includes(search) || o.items.some(i => i.name.toLowerCase().includes(search)));
+            if (status) filtered = filtered.filter(o => o.status === status);
+            if (days) { const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days); filtered = filtered.filter(o => new Date(o.date) >= cutoff); }
+
+            if (sort === 'oldest') filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+            else if (sort === 'highest') filtered.sort((a, b) => b.total - a.total);
+            else if (sort === 'lowest') filtered.sort((a, b) => a.total - b.total);
+            else filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            renderOrders(filtered);
+        }
+
+        // --- İSTATİSTİK GÜNCELLEME ---
+        function updateStats() {
+            if (!orders || orders.length === 0) {
+                document.getElementById('statTotal').textContent = '0';
+                document.getElementById('statPending').textContent = '0';
+                document.getElementById('statShipped').textContent = '0';
+                document.getElementById('statCompleted').textContent = '0';
+                return;
+            }
+
+            document.getElementById('statTotal').textContent = orders.length;
+
+            const pendingCount = orders.filter(o => ['pending', 'processing', 'beklemede', 'hazırlanıyor'].includes(o.status.toLowerCase())).length;
+            document.getElementById('statPending').textContent = pendingCount;
+
+            const shippedCount = orders.filter(o => ['shipped', 'kargoda'].includes(o.status.toLowerCase())).length;
+            document.getElementById('statShipped').textContent = shippedCount;
+
+            const completedCount = orders.filter(o => ['delivered', 'teslim edildi', 'tamamlandı'].includes(o.status.toLowerCase())).length;
+            document.getElementById('statCompleted').textContent = completedCount;
+        }
+
+        // --- DİĞER FONKSİYONLAR ---
+        function closeModal() { document.getElementById('orderModal').classList.remove('show'); }
+        function trackOrder(no) { showToast('Kargo Takip', `Takip No: ${no}`, 'info'); }
+
+        function downloadInvoice(orderId) {
+            showToast('Fatura Hazırlanıyor', `${orderId} nolu sipariş faturası oluşturuluyor...`, 'info');
+            window.open(`/api/orders/invoice/${orderId}`, '_blank');
+        }
+
+        function showToast(title, msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            if (!c) return;
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<div class="toast-icon"><i class="fas fa-${type === 'success' ? 'check' : 'info-circle'}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>`;
+            c.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 4000);
+        }
+
+        // --- BAŞLAT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchOrders();
+
+            // Event Listener'lar
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('dateFilter').addEventListener('change', applyFilters);
+            document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+            const modal = document.getElementById('orderModal');
+            if (modal) {
+                modal.addEventListener('click', e => { if (e.target.id === 'orderModal') closeModal(); });
+            }
+        });
+    </script>
+</body>
+</html>

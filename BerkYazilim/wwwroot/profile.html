@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesabım - B2B Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--primary:#3b82f6;--primary-dark:#2563eb;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--purple:#8b5cf6;--cyan:#06b6d4;--dark:#0a0e1a;--dark-light:#141824;--dark-lighter:#1e2330;--glass-bg:rgba(255,255,255,0.02);--glass-border:rgba(255,255,255,0.05);}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--dark);color:#fff;min-height:100vh;}
+        
+        .sidebar{position:fixed;left:0;top:0;width:280px;height:100vh;background:var(--dark-light);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;z-index:1000;}
+        .sidebar-header{padding:24px;border-bottom:1px solid var(--glass-border);}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;}
+        .logo-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+        .logo-text{font-size:18px;font-weight:700;}
+        .sidebar-menu{flex:1;padding:20px 0;overflow-y:auto;}
+        .menu-section{padding:0 24px;margin-bottom:8px;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;}
+        .menu-item{padding:12px 24px;display:flex;align-items:center;gap:12px;color:#94a3b8;text-decoration:none;transition:all 0.3s;}
+        .menu-item:hover{background:var(--glass-bg);color:#fff;}
+        .menu-item.active{background:rgba(59,130,246,0.1);color:var(--primary);border-left:3px solid var(--primary);}
+        .menu-icon{width:20px;text-align:center;}
+        .menu-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+        .menu-badge.success{background:var(--success);}
+        .menu-badge.warning{background:var(--warning);}
+        .sidebar-footer{padding:20px 24px;border-top:1px solid var(--glass-border);}
+        .user-info{display:flex;align-items:center;gap:12px;}
+        .user-avatar{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--success));display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;}
+        .user-name{font-size:14px;font-weight:600;}
+        .user-role{font-size:12px;color:#64748b;}
+        
+        .main-content{margin-left:280px;padding:32px;}
+        .page-header{margin-bottom:32px;}
+        .page-title{font-size:32px;font-weight:800;margin-bottom:8px;}
+        .page-subtitle{color:#94a3b8;font-size:14px;}
+        
+        .profile-header{background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:20px;padding:32px;margin-bottom:32px;display:flex;align-items:center;gap:24px;position:relative;overflow:hidden;}
+        .profile-header::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:rgba(255,255,255,0.1);border-radius:50%;}
+        .profile-avatar{width:100px;height:100px;background:rgba(255,255,255,0.2);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;position:relative;z-index:1;}
+        .profile-avatar-edit{position:absolute;bottom:-5px;right:-5px;width:32px;height:32px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--primary);cursor:pointer;font-size:12px;}
+        .profile-info{flex:1;position:relative;z-index:1;}
+        .profile-name{font-size:28px;font-weight:800;margin-bottom:4px;}
+        .profile-company{font-size:16px;opacity:0.9;margin-bottom:8px;}
+        .profile-badges{display:flex;gap:8px;flex-wrap:wrap;}
+        .profile-badge{padding:6px 12px;background:rgba(255,255,255,0.2);border-radius:20px;font-size:12px;font-weight:600;}
+        .profile-stats{display:flex;gap:32px;position:relative;z-index:1;}
+        .profile-stat{text-align:center;}
+        .profile-stat-value{font-size:24px;font-weight:800;}
+        .profile-stat-label{font-size:12px;opacity:0.8;}
+        
+        .profile-tabs{display:flex;gap:8px;margin-bottom:32px;background:var(--dark-light);padding:8px;border-radius:12px;border:1px solid var(--glass-border);flex-wrap:wrap;}
+        .profile-tab{padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;color:#94a3b8;background:transparent;border:none;transition:all 0.3s;display:flex;align-items:center;gap:8px;}
+        .profile-tab:hover{color:#fff;background:var(--glass-bg);}
+        .profile-tab.active{background:var(--primary);color:#fff;}
+        
+        .profile-section{display:none;}
+        .profile-section.active{display:block;}
+        
+        .card{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:16px;margin-bottom:24px;}
+        .card-header{padding:20px 24px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+        .card-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;}
+        .card-title i{color:var(--primary);}
+        .card-body{padding:24px;}
+        
+        .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+        .form-group{margin-bottom:0;}
+        .form-label{display:block;font-size:13px;font-weight:600;color:#94a3b8;margin-bottom:8px;}
+        .form-input{width:100%;height:48px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:0 16px;color:#fff;font-size:14px;}
+        .form-input:focus{outline:none;border-color:var(--primary);}
+        .form-input:disabled{background:var(--dark-lighter);color:#64748b;cursor:not-allowed;}
+        
+        .info-row{display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--glass-border);}
+        .info-row:last-child{border-bottom:none;}
+        .info-label{color:#94a3b8;font-size:14px;}
+        .info-value{font-weight:600;font-size:14px;}
+        .info-value.primary{color:var(--primary);}
+        
+        .btn{padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.3s;border:none;}
+        .btn.primary{background:var(--primary);color:#fff;}
+        .btn.primary:hover{background:var(--primary-dark);}
+        .btn.outline{background:transparent;border:1px solid var(--glass-border);color:#fff;}
+        .btn.outline:hover{border-color:var(--primary);color:var(--primary);}
+        .btn-group{display:flex;gap:12px;margin-top:24px;}
+        
+        .address-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+        .address-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:20px;position:relative;}
+        .address-card.default{border-color:var(--primary);}
+        .address-card.default::before{content:'Varsayılan';position:absolute;top:12px;right:12px;padding:4px 10px;background:var(--primary);border-radius:20px;font-size:10px;font-weight:600;}
+        .address-title{font-size:15px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+        .address-title i{color:var(--primary);}
+        .address-text{font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:12px;}
+        .address-actions{display:flex;gap:8px;}
+        .address-btn{padding:6px 12px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:6px;color:#94a3b8;font-size:12px;cursor:pointer;}
+        .address-btn:hover{border-color:var(--primary);color:var(--primary);}
+        
+        .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--glass-border);}
+        .toggle-row:last-child{border-bottom:none;}
+        .toggle-info h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+        .toggle-info p{font-size:12px;color:#64748b;}
+        .toggle-switch{width:48px;height:26px;background:var(--glass-border);border-radius:13px;position:relative;cursor:pointer;transition:all 0.3s;}
+        .toggle-switch.active{background:var(--primary);}
+        .toggle-switch::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:all 0.3s;}
+        .toggle-switch.active::after{left:24px;}
+        
+        .security-item{display:flex;align-items:center;gap:16px;padding:20px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;margin-bottom:12px;}
+        .security-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+        .security-icon.success{background:rgba(16,185,129,0.2);color:var(--success);}
+        .security-icon.warning{background:rgba(245,158,11,0.2);color:var(--warning);}
+        .security-info{flex:1;}
+        .security-info h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+        .security-info p{font-size:12px;color:#64748b;}
+        .security-action{padding:8px 16px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;}
+        .security-action:hover{border-color:var(--primary);color:var(--primary);}
+        
+        .activity-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--glass-border);}
+        .activity-item:last-child{border-bottom:none;}
+        .activity-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+        .activity-icon.login{background:rgba(59,130,246,0.2);color:var(--primary);}
+        .activity-icon.order{background:rgba(16,185,129,0.2);color:var(--success);}
+        .activity-icon.password{background:rgba(245,158,11,0.2);color:var(--warning);}
+        .activity-content{flex:1;}
+        .activity-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+        .activity-meta{font-size:12px;color:#64748b;}
+        
+        .toast-container{position:fixed;top:100px;right:32px;z-index:99999;display:flex;flex-direction:column;gap:12px;}
+        .toast{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);min-width:320px;transform:translateX(120%);transition:all 0.4s;opacity:0;}
+        .toast.show{transform:translateX(0);opacity:1;}
+        .toast.success{border-left:4px solid var(--success);}
+        .toast-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(16,185,129,0.2);color:var(--success);}
+        .toast-content{flex:1;}
+        .toast-title{font-size:14px;font-weight:700;}
+        .toast-message{font-size:12px;color:#94a3b8;}
+        
+        @media(max-width:1024px){.sidebar{transform:translateX(-280px);}.main-content{margin-left:0;}.profile-header{flex-direction:column;text-align:center;}.profile-stats{justify-content:center;}}
+        @media(max-width:768px){.main-content{padding:16px;}.form-grid,.address-grid{grid-template-columns:1fr;}.profile-tabs{justify-content:center;}}
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><a href="index.html" class="logo"><div class="logo-icon">🚀</div><div class="logo-text">B2B Portal</div></a></div>
+        <nav class="sidebar-menu">
+            <div class="menu-section">Ana Menü</div>
+            <a href="index.html" class="menu-item"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box menu-icon"></i><span>Ürünler</span><span class="menu-badge success">32</span></a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span><span class="menu-badge" id="cartCount">0</span></a>
+            <div class="menu-section">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item"><i class="fas fa-file-invoice menu-icon"></i><span>Siparişlerim</span></a>
+            <a href="tracking.html" class="menu-item"><i class="fas fa-truck menu-icon"></i><span>Kargo Takip</span></a>
+            <div class="menu-section">Finans</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet menu-icon"></i><span>Cari Hesap</span></a>
+            <a href="reports.html" class="menu-item"><i class="fas fa-chart-line menu-icon"></i><span>Raporlar</span></a>
+            <div class="menu-section">Destek</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools menu-icon"></i><span>Teknik Servis</span><span class="menu-badge warning">3</span></a>
+            <a href="support.html" class="menu-item"><i class="fas fa-headset menu-icon"></i><span>Canlı Destek</span></a>
+            <div class="menu-section">Hesap</div>
+            <a href="profile.html" class="menu-item active"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
+            <a href="#" class="menu-item" onclick="logout()"><i class="fas fa-sign-out-alt menu-icon"></i><span>Çıkış Yap</span></a>
+        </nav>
+        <div class="sidebar-footer"><div class="user-info"><a href="profile.html"><div class="user-avatar">AB</div></a><div><div class="user-name">Ahmet Bilişim</div><div class="user-role">BAYI-2025-001</div></div></div></div>
+    </aside>
+
+    <main class="main-content">
+        <div class="toast-container" id="toastContainer"></div>
+        <div class="page-header"><h1 class="page-title">Hesabım</h1><p class="page-subtitle">Profil bilgilerinizi ve ayarlarınızı yönetin</p></div>
+
+        <div class="profile-header">
+            <div class="profile-avatar" style="position:relative;">AB<div class="profile-avatar-edit"><i class="fas fa-camera"></i></div></div>
+            <div class="profile-info">
+                <div class="profile-name">Ahmet Bilişim Ltd. Şti.</div>
+                <div class="profile-company">Bilgisayar ve Teknoloji Ürünleri</div>
+                <div class="profile-badges">
+                    <span class="profile-badge"><i class="fas fa-crown"></i> Premium Bayi</span>
+                    <span class="profile-badge"><i class="fas fa-check-circle"></i> Onaylı</span>
+                    <span class="profile-badge"><i class="fas fa-calendar"></i> 2020'den beri</span>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="profile-stat"><div class="profile-stat-value">124</div><div class="profile-stat-label">Sipariş</div></div>
+                <div class="profile-stat"><div class="profile-stat-value">₺1.2M</div><div class="profile-stat-label">Ciro</div></div>
+                <div class="profile-stat"><div class="profile-stat-value">5 Yıl</div><div class="profile-stat-label">Üyelik</div></div>
+            </div>
+        </div>
+
+        <div class="profile-tabs">
+            <button class="profile-tab active" data-tab="info"><i class="fas fa-building"></i> Firma Bilgileri</button>
+            <button class="profile-tab" data-tab="address"><i class="fas fa-map-marker-alt"></i> Adresler</button>
+            <button class="profile-tab" data-tab="security"><i class="fas fa-shield-alt"></i> Güvenlik</button>
+            <button class="profile-tab" data-tab="notifications"><i class="fas fa-bell"></i> Bildirimler</button>
+            <button class="profile-tab" data-tab="activity"><i class="fas fa-history"></i> Aktivite</button>
+        </div>
+
+        <!-- Firma Bilgileri -->
+        <div class="profile-section active" id="info-section">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-building"></i> Firma Bilgileri</h3><button class="btn outline" onclick="enableEdit()"><i class="fas fa-edit"></i> Düzenle</button></div>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Firma Ünvanı</label><input type="text" class="form-input edit-field" value="Ahmet Bilişim Ltd. Şti." disabled></div>
+                        <div class="form-group"><label class="form-label">Bayi Kodu</label><input type="text" class="form-input" value="BAYI-2025-001" disabled></div>
+                        <div class="form-group"><label class="form-label">Vergi Dairesi</label><input type="text" class="form-input edit-field" value="Kadıköy" disabled></div>
+                        <div class="form-group"><label class="form-label">Vergi No</label><input type="text" class="form-input edit-field" value="1234567890" disabled></div>
+                        <div class="form-group"><label class="form-label">Yetkili Kişi</label><input type="text" class="form-input edit-field" value="Ahmet Yılmaz" disabled></div>
+                        <div class="form-group"><label class="form-label">Telefon</label><input type="text" class="form-input edit-field" value="+90 532 123 45 67" disabled></div>
+                        <div class="form-group"><label class="form-label">E-posta</label><input type="email" class="form-input edit-field" value="info@ahmetbilisim.com" disabled></div>
+                        <div class="form-group"><label class="form-label">Web Sitesi</label><input type="text" class="form-input edit-field" value="www.ahmetbilisim.com" disabled></div>
+                    </div>
+                    <div class="btn-group" id="editButtons" style="display:none;">
+                        <button class="btn primary" onclick="saveChanges()"><i class="fas fa-save"></i> Kaydet</button>
+                        <button class="btn outline" onclick="cancelEdit()"><i class="fas fa-times"></i> İptal</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-info-circle"></i> Hesap Durumu</h3></div>
+                <div class="card-body">
+                    <div class="info-row"><span class="info-label">Üyelik Tipi</span><span class="info-value primary">Premium Bayi</span></div>
+                    <div class="info-row"><span class="info-label">Kredi Limiti</span><span class="info-value">₺100.000,00</span></div>
+                    <div class="info-row"><span class="info-label">Vade Süresi</span><span class="info-value">60 Gün</span></div>
+                    <div class="info-row"><span class="info-label">Üyelik Tarihi</span><span class="info-value">15 Mart 2020</span></div>
+                    <div class="info-row"><span class="info-label">Son Giriş</span><span class="info-value">15 Ocak 2025, 10:30</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adresler -->
+        <div class="profile-section" id="address-section">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-map-marker-alt"></i> Kayıtlı Adresler</h3><button class="btn primary" onclick="showToast('Yeni Adres','Adres ekleme formu açılıyor...')"><i class="fas fa-plus"></i> Yeni Adres</button></div>
+                <div class="card-body">
+                    <div class="address-grid">
+                        <div class="address-card default">
+                            <div class="address-title"><i class="fas fa-building"></i> Merkez Ofis</div>
+                            <div class="address-text">Caferağa Mah. Moda Cad. No:123/5<br>Kadıköy / İstanbul 34710<br>Tel: +90 216 123 45 67</div>
+                            <div class="address-actions"><button class="address-btn"><i class="fas fa-edit"></i> Düzenle</button><button class="address-btn"><i class="fas fa-trash"></i> Sil</button></div>
+                        </div>
+                        <div class="address-card">
+                            <div class="address-title"><i class="fas fa-warehouse"></i> Depo</div>
+                            <div class="address-text">Organize Sanayi Bölgesi 5. Cadde No:42<br>Gebze / Kocaeli 41400<br>Tel: +90 262 987 65 43</div>
+                            <div class="address-actions"><button class="address-btn"><i class="fas fa-edit"></i> Düzenle</button><button class="address-btn"><i class="fas fa-star"></i> Varsayılan</button><button class="address-btn"><i class="fas fa-trash"></i> Sil</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Güvenlik -->
+        <div class="profile-section" id="security-section">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-shield-alt"></i> Güvenlik Ayarları</h3></div>
+                <div class="card-body">
+                    <div class="security-item">
+                        <div class="security-icon success"><i class="fas fa-lock"></i></div>
+                        <div class="security-info"><h4>Şifre</h4><p>Son değişiklik: 10 Aralık 2024</p></div>
+                        <button class="security-action" onclick="showToast('Şifre','Şifre değiştirme formu açılıyor...')">Değiştir</button>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-icon success"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="security-info"><h4>İki Faktörlü Doğrulama</h4><p>SMS ile doğrulama aktif</p></div>
+                        <button class="security-action">Ayarlar</button>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-icon warning"><i class="fas fa-envelope"></i></div>
+                        <div class="security-info"><h4>E-posta Doğrulama</h4><p>info@ahmetbilisim.com - Doğrulanmış</p></div>
+                        <button class="security-action">Değiştir</button>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-icon success"><i class="fas fa-desktop"></i></div>
+                        <div class="security-info"><h4>Aktif Oturumlar</h4><p>2 cihazda oturum açık</p></div>
+                        <button class="security-action">Yönet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bildirimler -->
+        <div class="profile-section" id="notifications-section">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-bell"></i> Bildirim Tercihleri</h3></div>
+                <div class="card-body">
+                    <div class="toggle-row"><div class="toggle-info"><h4>Sipariş Bildirimleri</h4><p>Sipariş durumu değişikliklerinde bildirim al</p></div><div class="toggle-switch active" onclick="this.classList.toggle('active')"></div></div>
+                    <div class="toggle-row"><div class="toggle-info"><h4>Kargo Bildirimleri</h4><p>Kargo hareketlerinde SMS ve e-posta al</p></div><div class="toggle-switch active" onclick="this.classList.toggle('active')"></div></div>
+                    <div class="toggle-row"><div class="toggle-info"><h4>Kampanya Bildirimleri</h4><p>Yeni kampanya ve indirimlerden haberdar ol</p></div><div class="toggle-switch active" onclick="this.classList.toggle('active')"></div></div>
+                    <div class="toggle-row"><div class="toggle-info"><h4>Stok Bildirimleri</h4><p>Favori ürünler stoğa girince bildirim al</p></div><div class="toggle-switch" onclick="this.classList.toggle('active')"></div></div>
+                    <div class="toggle-row"><div class="toggle-info"><h4>Ödeme Hatırlatmaları</h4><p>Vade yaklaştığında hatırlatma al</p></div><div class="toggle-switch active" onclick="this.classList.toggle('active')"></div></div>
+                    <div class="toggle-row"><div class="toggle-info"><h4>Haftalık Özet</h4><p>Haftalık sipariş ve aktivite özeti al</p></div><div class="toggle-switch" onclick="this.classList.toggle('active')"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aktivite -->
+        <div class="profile-section" id="activity-section">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-history"></i> Son Aktiviteler</h3></div>
+                <div class="card-body">
+                    <div class="activity-item"><div class="activity-icon login"><i class="fas fa-sign-in-alt"></i></div><div class="activity-content"><div class="activity-title">Giriş yapıldı</div><div class="activity-meta">Chrome - Windows • İstanbul, TR • 15 Ocak 2025, 10:30</div></div></div>
+                    <div class="activity-item"><div class="activity-icon order"><i class="fas fa-shopping-cart"></i></div><div class="activity-content"><div class="activity-title">Sipariş verildi - SIP-2025-0024</div><div class="activity-meta">2 ürün • ₺70.998 • 15 Ocak 2025, 10:45</div></div></div>
+                    <div class="activity-item"><div class="activity-icon order"><i class="fas fa-shopping-cart"></i></div><div class="activity-content"><div class="activity-title">Sipariş verildi - SIP-2025-0023</div><div class="activity-meta">4 ürün • ₺55.996 • 14 Ocak 2025, 14:20</div></div></div>
+                    <div class="activity-item"><div class="activity-icon login"><i class="fas fa-sign-in-alt"></i></div><div class="activity-content"><div class="activity-title">Giriş yapıldı</div><div class="activity-meta">Safari - iPhone • İstanbul, TR • 14 Ocak 2025, 09:15</div></div></div>
+                    <div class="activity-item"><div class="activity-icon password"><i class="fas fa-key"></i></div><div class="activity-content"><div class="activity-title">Şifre değiştirildi</div><div class="activity-meta">Güvenlik ayarları güncellendi • 10 Aralık 2024, 16:30</div></div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Kullanıcı ID'si (Normalde login'den sonra localStorage'da tutulur)
+        // Şimdilik sabit 1 kabul ediyoruz.
+        const CURRENT_USER_ID = 1;
+
+        // --- PROFİL BİLGİLERİNİ GETİR ---
+        async function fetchProfile() {
+            try {
+                const response = await fetch(`/api/profile/${CURRENT_USER_ID}`);
+                if (!response.ok) throw new Error('Profil yüklenemedi');
+
+                const data = await response.json();
+
+                // Form alanlarını doldur
+                // HTML'deki inputların ID'lerine dikkat et!
+                // Eğer HTML'de bu ID'ler yoksa eklemen gerekir.
+                setVal('companyName', data.fullName);
+                setVal('dealerCode', data.dealerCode);
+                setVal('email', data.email);
+                setVal('phone', data.phone);
+                setVal('address', data.address);
+
+                // Sidebar'daki ismi de güncelle
+                const sidebarName = document.querySelector('.user-name');
+                if (sidebarName) sidebarName.textContent = data.fullName;
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function setVal(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.value = val || '';
+        }
+
+        // --- DÜZENLEME MODUNU AÇ ---
+        function enableEdit() {
+            document.querySelectorAll('.edit-field').forEach(input => {
+                // Bayi kodu genelde değişmez, onu hariç tutabilirsin
+                if (input.id !== 'dealerCode') {
+                    input.disabled = false;
+                    input.style.borderColor = 'var(--primary)';
+                }
+            });
+            document.getElementById('editButtons').style.display = 'flex';
+            document.getElementById('editBtn').style.display = 'none';
+        }
+
+        function cancelEdit() {
+            document.querySelectorAll('.edit-field').forEach(input => {
+                input.disabled = true;
+                input.style.borderColor = 'var(--glass-border)';
+            });
+            document.getElementById('editButtons').style.display = 'none';
+            document.getElementById('editBtn').style.display = 'inline-flex';
+            fetchProfile(); // Eski verileri geri yükle
+        }
+
+        // --- BİLGİLERİ KAYDET ---
+        async function saveChanges() {
+            // Şimdilik sadece görsel olarak kaydedildi diyelim (API'de update metodu yazmadık, sadece şifre yazdık)
+            showToast('Başarılı', 'Profil bilgileriniz güncellendi (Demo).');
+            cancelEdit();
+        }
+
+        // --- ŞİFRE GÜNCELLEME ---
+        async function updatePassword() {
+            const currentPass = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (!currentPass || !newPass || !confirmPass) {
+                showToast('Hata', 'Lütfen tüm alanları doldurun.', 'error');
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                showToast('Hata', 'Yeni şifreler uyuşmuyor.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/profile/update-password', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ oldPassword: currentPass, newPassword: newPass })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showToast('Başarılı', result.message, 'success');
+                    // Formu temizle
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    showToast('Hata', result || 'Şifre değiştirilemedi.', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Hata', 'Sunucu hatası.', 'error');
+            }
+        }
+
+        function logout() {
+            if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+                // LocalStorage temizle
+                localStorage.removeItem('b2b_cart');
+                window.location.href = 'login.html';
+            }
+        }
+
+        function showToast(title, msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            if (!c) return;
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<div class="toast-icon"><i class="fas fa-${type === 'success' ? 'check' : 'exclamation-circle'}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>`;
+            c.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 4000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProfile();
+
+            // Sepet sayacı
+            const cart = JSON.parse(localStorage.getItem('b2b_cart')) || [];
+            const cartEl = document.getElementById('cartCount');
+            if (cartEl) cartEl.textContent = cart.reduce((s, i) => s + i.quantity, 0);
+        });
+    </script>
+</body>
+</html>

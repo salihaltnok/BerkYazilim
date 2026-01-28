@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Yönetimi - Admin Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* (Admin Teması - Diğer sayfalarla aynı) */
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #111827;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #1f2937;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            padding: 24px;
+            font-size: 20px;
+            font-weight: 800;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .logo span {
+                color: #818cf8;
+            }
+
+        .menu {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 14px;
+            border-left: 4px solid transparent;
+        }
+
+            .menu-item:hover, .menu-item.active {
+                background: #111827;
+                color: #fff;
+                border-left: 4px solid var(--primary);
+            }
+
+        /* MAIN */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            padding: 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* TABLE */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px 24px;
+            background: #f9fafb;
+            color: var(--text-light);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        /* BADGES */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-processing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-shipped {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+
+        .badge-delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ACTION BUTTONS */
+        .btn-action {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: 0.2s;
+            color: #6b7280;
+        }
+
+            .btn-action:hover {
+                background: #f3f4f6;
+                color: var(--primary);
+            }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal {
+            background: white;
+            width: 400px;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo"><i class="fas fa-layer-group"></i> BerkYazilim <span>Admin</span></div>
+        <nav class="menu">
+            <a href="admin.html" class="menu-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="admin-dealers.html" class="menu-item"><i class="fas fa-users"></i> Bayiler</a>
+            <a href="admin-products.html" class="menu-item"><i class="fas fa-box"></i> Ürün Yönetimi</a>
+            <a href="admin-orders.html" class="menu-item active"><i class="fas fa-shopping-cart"></i> Siparişler</a>
+            <a href="login.html" class="menu-item" style="margin-top:auto; color:#ef4444;"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div class="header">
+            <h1 class="page-title">Sipariş Yönetimi</h1>
+            <div>
+                <input type="text" id="orderSearch" placeholder="Sipariş No Ara..." style="padding:10px; border:1px solid #e5e7eb; border-radius:8px; width:250px;">
+            </div>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sipariş No</th>
+                        <th>Bayi</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                        <th style="text-align:right;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <tr><td colspan="6" style="text-align:center; padding:20px;">Yükleniyor...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal">
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                <h3 style="font-weight:700;">Sipariş Durumu</h3>
+                <button onclick="closeModal()" style="border:none; background:none; font-size:18px; cursor:pointer;">&times;</button>
+            </div>
+            <input type="hidden" id="selectedOrderNumber">
+
+            <label style="display:block; font-size:13px; margin-bottom:6px; color:#6b7280;">Durum Seçin</label>
+            <select id="statusSelect" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; margin-bottom:16px;">
+                <option value="Pending">Beklemede</option>
+                <option value="Processing">Hazırlanıyor</option>
+                <option value="Shipped">Kargoya Verildi</option>
+                <option value="Delivered">Teslim Edildi</option>
+                <option value="Cancelled">İptal Edildi</option>
+            </select>
+
+            <div id="trackingGroup" style="display:none;">
+                <label style="display:block; font-size:13px; margin-bottom:6px; color:#6b7280;">Kargo Takip No</label>
+                <input type="text" id="trackingNo" placeholder="Örn: 123456789" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
+            </div>
+
+            <button class="btn-save" onclick="saveStatus()">Güncelle</button>
+        </div>
+    </div>
+
+    <script>
+        // Format
+        function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(p); }
+        function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR'); }
+
+        function getStatusBadge(status) {
+            const map = {
+                'pending': 'badge-pending',
+                'beklemede': 'badge-pending',
+                'processing': 'badge-processing',
+                'hazırlanıyor': 'badge-processing',
+                'shipped': 'badge-shipped',
+                'kargoda': 'badge-shipped',
+                'delivered': 'badge-delivered',
+                'teslim edildi': 'badge-delivered',
+                'cancelled': 'badge-cancelled',
+                'iptal': 'badge-cancelled'
+            };
+            const cls = map[status.toLowerCase()] || 'badge-pending';
+            return `<span class="badge ${cls}">${status}</span>`;
+        }
+
+        async function fetchOrders() {
+            try {
+                const res = await fetch('/api/admin/orders');
+                const orders = await res.json();
+
+                const tbody = document.getElementById('ordersTableBody');
+                if(orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Sipariş bulunamadı.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = orders.map(o => `
+                    <tr>
+                        <td style="font-weight:600; color:var(--primary);">${o.orderNumber}</td>
+                        <td>${o.dealerName}</td>
+                        <td>${formatDate(o.orderDate)}</td>
+                        <td style="font-weight:600;">${formatPrice(o.totalAmount)}</td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td style="text-align:right;">
+                            <button class="btn-action" onclick="openStatusModal('${o.orderNumber}', '${o.status}')" title="Durumu Değiştir">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (err) { console.error(err); }
+        }
+
+        // MODAL İŞLEMLERİ
+        const modal = document.getElementById('statusModal');
+        const statusSelect = document.getElementById('statusSelect');
+        const trackingGroup = document.getElementById('trackingGroup');
+
+        function openStatusModal(orderNo, currentStatus) {
+            document.getElementById('selectedOrderNumber').value = orderNo;
+            statusSelect.value = currentStatus;
+
+            // Eğer zaten kargodaysa takip no alanını aç
+            toggleTrackingInput();
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Kargo seçilirse takip no sor
+        statusSelect.addEventListener('change', toggleTrackingInput);
+
+        function toggleTrackingInput() {
+            const val = statusSelect.value;
+            if(val === 'Shipped') trackingGroup.style.display = 'block';
+            else trackingGroup.style.display = 'none';
+        }
+
+        async function saveStatus() {
+            const orderNo = document.getElementById('selectedOrderNumber').value;
+            const newStatus = statusSelect.value;
+            const trackingNo = document.getElementById('trackingNo').value;
+
+            const body = { status: newStatus };
+            if(newStatus === 'Shipped' && trackingNo) {
+                body.trackingNumber = trackingNo;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/orders/${orderNo}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if(res.ok) {
+                    alert('Sipariş durumu güncellendi!');
+                    closeModal();
+                    fetchOrders(); // Listeyi yenile
+                } else {
+                    alert('Hata oluştu.');
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // Arama (Basit Filtre)
+        document.getElementById('orderSearch').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#ordersTableBody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchOrders);
+    </script>
+</body>
+</html>

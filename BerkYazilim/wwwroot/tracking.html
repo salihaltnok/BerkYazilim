@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kargo Takip - B2B Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --dark: #0a0e1a;
+            --dark-light: #141824;
+            --glass-border: rgba(255,255,255,0.05);
+        }
+
+        body {
+            font-family: 'Inter',sans-serif;
+            background: var(--dark);
+            color: #fff;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* STANDART SIDEBAR (Önceki ile aynı) */
+        .sidebar {
+            width: 280px;
+            background: var(--dark-light);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+
+            .menu-item:hover, .menu-item.active {
+                background: rgba(255,255,255,0.02);
+                color: #fff;
+            }
+
+            .menu-item.active {
+                border-left-color: var(--primary);
+                background: rgba(59,130,246,0.1);
+            }
+
+        /* MAIN LAYOUT */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* TOP SEARCH */
+        .search-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 600px;
+            margin: 20px auto 0;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 0 20px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .search-btn {
+            height: 50px;
+            padding: 0 30px;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* CONTENT GRID */
+        .tracking-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            min-height: 500px;
+        }
+
+        /* LEFT LIST */
+        .shipment-list {
+            background: var(--dark-light);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .shipment-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .shipment-item:hover {
+                background: rgba(255,255,255,0.02);
+            }
+
+            .shipment-item.active {
+                background: rgba(59,130,246,0.1);
+                border-left: 4px solid var(--primary);
+            }
+
+        .shipment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .shipment-id {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .shipment-date {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .status-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status-transit {
+            background: rgba(59,130,246,0.2);
+            color: var(--primary);
+        }
+
+        .status-delivered {
+            background: rgba(16,185,129,0.2);
+            color: var(--success);
+        }
+
+        .status-processing {
+            background: rgba(245,158,11,0.2);
+            color: var(--warning);
+        }
+
+        /* RIGHT DETAIL */
+        .detail-card {
+            background: var(--dark-light);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            padding: 32px;
+            display: none;
+        }
+
+            .detail-card.active {
+                display: block;
+            }
+
+        /* DETAIL HEADER */
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tracking-number {
+            font-size: 24px;
+            font-weight: 800;
+            font-family: monospace;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .carrier-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .carrier-logo {
+            height: 30px;
+        }
+
+        /* PROGRESS BAR */
+        .progress-container {
+            margin-bottom: 40px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            border-radius: 4px;
+            transition: width 1s ease;
+            width: 0%;
+        }
+
+        /* TIMELINE */
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+
+            .timeline::before {
+                content: '';
+                position: absolute;
+                left: 7px;
+                top: 5px;
+                bottom: 0;
+                width: 2px;
+                background: rgba(255,255,255,0.1);
+            }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 25px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -22px;
+            width: 16px;
+            height: 16px;
+            background: var(--dark-light);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item.done .timeline-dot {
+            background: var(--primary);
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .timeline-status {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 4px 0;
+            color: #fff;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #64748b;
+            text-align: center;
+        }
+
+            .empty-state i {
+                font-size: 64px;
+                margin-bottom: 20px;
+                opacity: 0.5;
+            }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header"><a href="dashboard.html" class="logo"><div class="logo-icon">🚀</div><div class="logo-text">B2B Portal</div></a></div>
+        <nav class="sidebar-menu">
+            <div style="padding:0 20px; margin-bottom:10px; font-size:11px; color:#64748b; font-weight:600;">ANA MENÜ</div>
+            <a href="dashboard.html" class="menu-item"><i class="fas fa-home" style="width:20px;"></i> Dashboard</a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box" style="width:20px;"></i> Ürünler</a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart" style="width:20px;"></i> Sepetim</a>
+            <div style="padding:0 20px; margin:20px 0 10px; font-size:11px; color:#64748b; font-weight:600;">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item"><i class="fas fa-file-invoice" style="width:20px;"></i> Siparişlerim</a>
+            <a href="tracking.html" class="menu-item active"><i class="fas fa-truck" style="width:20px;"></i> Kargo Takip</a>
+            <div style="padding:0 20px; margin:20px 0 10px; font-size:11px; color:#64748b; font-weight:600;">DİĞER</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet" style="width:20px;"></i> Finans</a>
+            <a href="reports.html" class="menu-item"><i class="fas fa-chart-line" style="width:20px;"></i> Raporlar</a>
+            <a href="login.html" class="menu-item" style="color:#ef4444; margin-top:auto;"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Çıkış</a>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <div class="search-card">
+            <h2>📦 Kargo Takip</h2>
+            <p style="color:#94a3b8;">Gönderinizi anlık olarak takip edin.</p>
+            <div class="search-box">
+                <input type="text" id="trackInput" class="search-input" placeholder="Takip Numarası (Örn: TR123456)">
+                <button class="search-btn" onclick="manualSearch()">Sorgula</button>
+            </div>
+        </div>
+
+        <div class="tracking-grid">
+            <div class="shipment-list">
+                <div class="list-header">
+                    <span>Son Kargolar</span>
+                    <i class="fas fa-history" style="color:#64748b;"></i>
+                </div>
+                <div id="shipmentListContainer">
+                    <div style="padding:20px; text-align:center; color:#64748b;">Yükleniyor...</div>
+                </div>
+            </div>
+
+            <div style="position:relative;">
+                <div id="emptyState" class="detail-card active empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <h3>Bir Gönderi Seçin</h3>
+                    <p>Detayları görmek için soldaki listeden bir gönderiye tıklayın.</p>
+                </div>
+
+                <div id="trackingDetail" class="detail-card">
+                    <div class="detail-header">
+                        <div>
+                            <div style="font-size:12px; color:#94a3b8;">TAKİP NUMARASI</div>
+                            <div class="tracking-number" id="detailTrackNo" onclick="copyToClipboard()" title="Kopyalamak için tıkla">...</div>
+                        </div>
+                        <div class="carrier-info">
+                            <div style="text-align:right;">
+                                <div style="font-weight:700;" id="detailCarrierName">MNG Kargo</div>
+                                <div style="font-size:12px; color:#success;" id="detailEta">Tahmini: ...</div>
+                            </div>
+                            <img src="" id="detailCarrierLogo" class="carrier-logo" alt="Logo">
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-weight:600;">
+                            <span>Sipariş</span>
+                            <span>Yolda</span>
+                            <span>Teslim</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+                    </div>
+
+                    <div class="timeline" id="timelineContainer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- HELPERS ---
+        function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); }
+        function copyToClipboard() {
+            const text = document.getElementById('detailTrackNo').textContent;
+            navigator.clipboard.writeText(text);
+            alert('Takip numarası kopyalandı: ' + text);
+        }
+
+        // --- FETCH LIST ---
+        async function fetchShipments() {
+            const dealerCode = localStorage.getItem('dealer_code');
+            if (!dealerCode) return;
+
+            try {
+                // Backend'deki yeni metodu çağırıyoruz
+                const res = await fetch(`/api/dealer/shipments/${dealerCode}`);
+                if (!res.ok) throw new Error('Hata');
+                const data = await res.json();
+
+                const container = document.getElementById('shipmentListContainer');
+
+                if (data.length === 0) {
+                    container.innerHTML = '<div style="padding:20px; text-align:center;">Henüz kargo yok.</div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(s => `
+                        <div class="shipment-item" onclick="loadDetail('${s.orderNumber}')">
+                            <div class="shipment-row">
+                                <span class="shipment-id">${s.orderNumber}</span>
+                                <span class="status-badge status-${s.statusKey}">${s.statusText}</span>
+                            </div>
+                            <div class="shipment-row">
+                                <span class="shipment-date">${new Date(s.date).toLocaleDateString('tr-TR')}</span>
+                                <span style="font-size:12px; color:#94a3b8;">${s.itemCount} Ürün</span>
+                            </div>
+                            <div style="font-size:11px; color:#64748b; margin-top:4px;">Takip: ${s.trackingNumber}</div>
+                        </div>
+                    `).join('');
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('shipmentListContainer').innerHTML = '<div style="padding:20px; color:red;">Bağlantı hatası.</div>';
+            }
+        }
+
+        // --- LOAD DETAIL ---
+        async function loadDetail(identifier) {
+            // UI Reset
+            document.getElementById('emptyState').classList.remove('active');
+            document.getElementById('trackingDetail').classList.add('active');
+            document.querySelectorAll('.shipment-item').forEach(el => el.classList.remove('active'));
+            // (Burada tıklanan elemana active class eklenebilir ama basitlik için geçiyorum)
+
+            try {
+                const res = await fetch(`/api/dealer/tracking/${identifier}`);
+                if (!res.ok) { alert('Detay bulunamadı'); return; }
+                const data = await res.json();
+
+                // Verileri Doldur
+                document.getElementById('detailTrackNo').textContent = data.trackingNumber;
+                document.getElementById('detailCarrierName').textContent = data.carrier;
+                document.getElementById('detailCarrierLogo').src = data.carrierLogo;
+                document.getElementById('detailEta').textContent = 'Teslimat: ' + new Date(data.estimatedDelivery).toLocaleDateString('tr-TR');
+
+                // Progress Bar
+                document.getElementById('progressBar').style.width = data.progress + '%';
+
+                // Timeline Oluştur
+                const timelineHtml = data.history.map(h => `
+                        <div class="timeline-item ${h.done ? 'done' : ''}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">${formatDate(h.date)}</div>
+                            <div class="timeline-status">${h.status}</div>
+                            <div class="timeline-desc">
+                                <i class="fas ${h.icon}" style="margin-right:5px;"></i> ${h.location}<br>
+                                ${h.description}
+                            </div>
+                        </div>
+                    `).join('');
+
+                document.getElementById('timelineContainer').innerHTML = timelineHtml;
+
+            } catch (err) { console.error(err); }
+        }
+
+        function manualSearch() {
+            const val = document.getElementById('trackInput').value;
+            if (val) loadDetail(val);
+        }
+
+        // BAŞLAT
+        document.addEventListener('DOMContentLoaded', fetchShipments);
+    </script>
+</body>
+</html>

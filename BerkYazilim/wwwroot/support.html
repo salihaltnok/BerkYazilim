@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destek Merkezi - B2B Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --dark: #0a0e1a;
+            --dark-light: #141824;
+            --dark-lighter: #1e2330;
+            --glass-border: rgba(255,255,255,0.05);
+            --msg-sent: #3b82f6;
+            --msg-received: #1e2330;
+        }
+
+        body {
+            font-family: 'Inter',sans-serif;
+            background: var(--dark);
+            color: #fff;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR (Standart) */
+        .sidebar {
+            width: 280px;
+            background: var(--dark-light);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+
+            .menu-item:hover, .menu-item.active {
+                background: rgba(255,255,255,0.02);
+                color: #fff;
+            }
+
+            .menu-item.active {
+                border-left-color: var(--primary);
+                background: rgba(59,130,246,0.1);
+            }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,var(--primary),#10b981);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* MAIN LAYOUT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+            overflow: hidden;
+        }
+
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* SUPPORT GRID */
+        .support-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* TICKET LIST */
+        .ticket-list {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .list-search {
+            padding: 16px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            background: var(--dark-lighter);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        .tickets-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .ticket-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .ticket-item:hover, .ticket-item.active {
+                background: rgba(255,255,255,0.03);
+            }
+
+            .ticket-item.active {
+                border-left: 3px solid var(--primary);
+            }
+
+        .t-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .t-id {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .t-date {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .t-subject {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .t-preview {
+            font-size: 12px;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .t-status {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 6px;
+        }
+
+        .status-Open {
+            background: rgba(59,130,246,0.2);
+            color: var(--primary);
+        }
+
+        .status-Answered {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+        }
+
+        .status-Closed {
+            background: rgba(239,68,68,0.2);
+            color: #ef4444;
+        }
+
+        /* CHAT AREA */
+        .chat-area {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(20,24,36,0.95);
+        }
+
+        .chat-title h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .chat-title span {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .msg-in {
+            align-self: flex-start;
+            background: var(--dark-lighter);
+            border-bottom-left-radius: 2px;
+        }
+
+        .msg-out {
+            align-self: flex-end;
+            background: var(--msg-sent);
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            gap: 8px;
+        }
+
+        .msg-time {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .msg-author {
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 12px;
+            background: var(--dark-light);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--dark-lighter);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px;
+            color: #fff;
+            resize: none;
+            height: 48px;
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* FAQ SECTION */
+        .faq-section {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 16px;
+            overflow-y: auto;
+            max-height: 150px;
+        }
+
+        .faq-card {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+        }
+
+            .faq-card h4 {
+                font-size: 13px;
+                margin: 0 0 4px 0;
+                color: var(--primary);
+            }
+
+            .faq-card p {
+                font-size: 12px;
+                color: #94a3b8;
+                margin: 0;
+            }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal {
+            background: var(--dark-light);
+            padding: 24px;
+            border-radius: 16px;
+            width: 500px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            background: var(--dark-lighter);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><a href="dashboard.html" class="logo"><div class="logo-icon">🚀</div><div class="logo-text">B2B Portal</div></a></div>
+        <nav class="sidebar-menu">
+            <div style="padding:0 20px;margin-bottom:10px;font-size:11px;color:#64748b;font-weight:600;">ANA MENÜ</div>
+            <a href="dashboard.html" class="menu-item"><i class="fas fa-home" style="width:20px;"></i> Dashboard</a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box" style="width:20px;"></i> Ürünler</a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart" style="width:20px;"></i> Sepetim</a>
+            <div style="padding:0 20px;margin:20px 0 10px;font-size:11px;color:#64748b;font-weight:600;">DESTEK</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools" style="width:20px;"></i> Teknik Servis</a>
+            <a href="support.html" class="menu-item active"><i class="fas fa-headset" style="width:20px;"></i> Canlı Destek</a>
+            <a href="login.html" class="menu-item" style="color:#ef4444;margin-top:auto;"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Çıkış</a>
+        </nav>
+        <div class="sidebar-footer"><div class="user-info"><div class="user-avatar">AB</div><div><div class="user-name">Ahmet Bilişim</div><div class="user-role">BAYI-2025-001</div></div></div></div>
+    </aside>
+
+    <div class="main-content">
+        <div class="header-area">
+            <div>
+                <div class="page-title">Destek Merkezi</div>
+                <div style="color:#94a3b8; font-size:14px;">Taleplerinizi yönetin ve destek ekibiyle görüşün.</div>
+            </div>
+            <button class="btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Yeni Talep Aç</button>
+        </div>
+
+        <div class="support-grid">
+            <div class="ticket-list">
+                <div class="list-search"><input type="text" class="search-input" placeholder="Talep ara..."></div>
+                <div class="tickets-container" id="ticketsList">
+                    <div style="padding:20px;text-align:center;color:#64748b;">Yükleniyor...</div>
+                </div>
+            </div>
+
+            <div class="chat-area" id="chatArea" style="display:none;">
+                <div class="chat-header">
+                    <div class="chat-title"><h3 id="activeSubject">Konu Başlığı</h3><span id="activeId">#ID</span></div>
+                    <span class="t-status status-Open" id="activeStatus">Açık</span>
+                </div>
+                <div class="chat-messages" id="messageContainer">
+                </div>
+                <div class="chat-input-area">
+                    <textarea class="chat-input" id="messageInput" placeholder="Mesajınızı yazın..."></textarea>
+                    <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <div id="emptyState" class="chat-area" style="align-items:center;justify-content:center;color:#64748b;">
+                <i class="fas fa-comments" style="font-size:64px;margin-bottom:16px;opacity:0.5;"></i>
+                <p>Mesajlarını görmek için soldan bir talep seçin.</p>
+            </div>
+        </div>
+
+        <h4 style="margin-top:20px;">Sıkça Sorulan Sorular</h4>
+        <div class="faq-section" id="faqContainer"></div>
+    </div>
+
+    <div class="modal-overlay" id="newTicketModal">
+        <div class="modal">
+            <h2 style="margin-top:0;">Yeni Destek Talebi</h2>
+            <div class="form-group">
+                <label class="form-label">Konu</label>
+                <input type="text" class="form-input" id="newSubject">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Öncelik</label>
+                <select class="form-select" id="newPriority">
+                    <option value="Low">Düşük</option>
+                    <option value="Medium" selected>Orta</option>
+                    <option value="High">Yüksek</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mesajınız</label>
+                <textarea class="form-input" style="height:100px;" id="newMessage"></textarea>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button class="btn-primary" style="background:#374151;" onclick="closeModal()">İptal</button>
+                <button class="btn-primary" onclick="createTicket()">Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTicketId = null;
+
+        async function fetchTickets() {
+            const dealerCode = localStorage.getItem('dealer_code');
+            if (!dealerCode) { window.location.href = 'login.html'; return; }
+
+            const res = await fetch(`/api/dealer/tickets/${dealerCode}`);
+            const tickets = await res.json();
+
+            const container = document.getElementById('ticketsList');
+            if (tickets.length === 0) { container.innerHTML = '<div style="padding:20px;text-align:center;">Talep yok.</div>'; return; }
+
+            container.innerHTML = tickets.map(t => `
+                    <div class="ticket-item" onclick="loadChat('${t.ticketNumber}')">
+                        <div class="t-header">
+                            <span class="t-id">${t.ticketNumber}</span>
+                            <span class="t-date">${t.date}</span>
+                        </div>
+                        <div class="t-subject">${t.subject}</div>
+                        <div class="t-preview">${t.lastMessage}</div>
+                        <span class="t-status status-${t.status}">${t.status}</span>
+                    </div>
+                `).join('');
+        }
+
+        async function loadChat(ticketId) {
+            currentTicketId = ticketId;
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('chatArea').style.display = 'flex';
+
+            const res = await fetch(`/api/dealer/ticket-detail/${ticketId}`);
+            const data = await res.json();
+
+            document.getElementById('activeSubject').textContent = data.subject;
+            document.getElementById('activeId').textContent = data.ticketNumber;
+
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = data.messages.map(m => `
+                    <div class="message ${m.isAgent ? 'msg-in' : 'msg-out'}">
+                        <div>${m.message}</div>
+                        <div class="msg-meta">
+                            <span class="msg-author">${m.isAgent ? 'Destek Ekibi' : 'Siz'}</span>
+                            <span class="msg-time">${m.time}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+            container.scrollTop = container.scrollHeight; // Scroll to bottom
+        }
+
+        async function sendMessage() {
+            const msg = document.getElementById('messageInput').value;
+            if (!msg) return;
+
+            await fetch('/api/dealer/ticket/reply', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticketNumber: currentTicketId, message: msg })
+            });
+
+            document.getElementById('messageInput').value = '';
+            loadChat(currentTicketId); // Refresh chat
+        }
+
+        async function createTicket() {
+            const dealerCode = localStorage.getItem('dealer_code');
+            const data = {
+                dealerCode,
+                subject: document.getElementById('newSubject').value,
+                priority: document.getElementById('newPriority').value,
+                message: document.getElementById('newMessage').value
+            };
+
+            await fetch('/api/dealer/ticket/create', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+            });
+
+            closeModal();
+            fetchTickets(); // Refresh list
+        }
+
+        async function fetchFAQs() {
+            const res = await fetch('/api/dealer/faqs');
+            const faqs = await res.json();
+            document.getElementById('faqContainer').innerHTML = faqs.map(f => `
+                    <div class="faq-card">
+                        <h4>${f.question}</h4>
+                        <p>${f.answer}</p>
+                    </div>
+                `).join('');
+        }
+
+        function openModal() { document.getElementById('newTicketModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('newTicketModal').style.display = 'none'; }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTickets();
+            fetchFAQs();
+        });
+    </script>
+</body>
+</html>

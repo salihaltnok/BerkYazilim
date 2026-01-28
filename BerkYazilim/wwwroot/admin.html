@@ -1,0 +1,665 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetim Paneli - BerkYazilim SaaS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #111827;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #1f2937;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .logo {
+            padding: 24px;
+            font-size: 20px;
+            font-weight: 800;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .logo span {
+                color: #818cf8;
+            }
+
+        .menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 14px;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+            .menu-item:hover, .menu-item.active {
+                background: #111827;
+                color: #fff;
+                border-left: 4px solid var(--primary);
+            }
+
+            .menu-item i {
+                width: 20px;
+                text-align: center;
+            }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .btn-primary:hover {
+                background: var(--primary-dark);
+            }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 8px;
+            color: #111827;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        /* TABLES */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px 24px;
+            background: #f9fafb;
+            color: var(--text-light);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            color: #374151;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* STATUS BADGES */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal {
+            background: white;
+            width: 600px;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 5px;
+        }
+
+        /* CHAT STYLE */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .msg {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .msg-in {
+            align-self: flex-start;
+            background: #f3f4f6;
+            color: #1f2937;
+            border-bottom-left-radius: 2px;
+        }
+
+        .msg-out {
+            align-self: flex-end;
+            background: var(--primary);
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+            display: block;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .chat-send-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* SECTIONS */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+            .section.active {
+                display: block;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo"><i class="fas fa-layer-group"></i> BerkYazilim <span>Admin</span></div>
+        <nav class="menu">
+            <div class="menu-item active" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Dashboard</div>
+            <div class="menu-item" onclick="showSection('tickets')"><i class="fas fa-headset"></i> Destek Talepleri</div>
+            <div class="menu-item" onclick="showSection('services')"><i class="fas fa-tools"></i> Teknik Servis</div>
+            <div class="menu-item"><i class="fas fa-box"></i> Ürün Yönetimi</div>
+            <div class="menu-item"><i class="fas fa-users"></i> Bayi Listesi</div>
+            <div class="menu-item" onclick="logout()" style="margin-top:auto; color:#ef4444;"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</div>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div id="dashboard-section" class="section active">
+            <div class="header">
+                <div>
+                    <h1 class="page-title">Yönetim Paneli</h1>
+                    <p style="color:var(--text-light); font-size:14px; margin-top:4px;">Genel bakış ve istatistikler</p>
+                </div>
+                <button class="btn-primary" onclick="openDealerModal()">
+                    <i class="fas fa-plus"></i> Yeni Bayi Ekle
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Toplam Ciro</div>
+                    <div class="stat-value" style="color:var(--primary);" id="statRevenue">₺0,00</div>
+                    <div class="stat-trend trend-up"><i class="fas fa-arrow-up"></i> Güncel durum</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Aktif Bayiler</div>
+                    <div class="stat-value" id="statDealers">0</div>
+                    <div class="stat-trend trend-up"><i class="fas fa-user-check"></i> Kayıtlı bayi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Açık Talepler</div>
+                    <div class="stat-value" style="color:#f59e0b;" id="statTickets">0</div>
+                    <div class="stat-trend"><i class="fas fa-headset"></i> Destek bekleyen</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Servis İşlemleri</div>
+                    <div class="stat-value" style="color:#ef4444;" id="statServices">0</div>
+                    <div class="stat-trend"><i class="fas fa-tools"></i> Arıza kaydı</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Son Siparişler</div>
+                    <a href="#" style="color:var(--primary); text-decoration:none; font-size:14px; font-weight:500;">Tümünü Gör</a>
+                </div>
+                <table>
+                    <thead><tr><th>Sipariş No</th><th>Bayi</th><th>Tarih</th><th>Tutar</th><th>Durum</th><th>İşlem</th></tr></thead>
+                    <tbody id="recentOrdersTable"><tr><td colspan="6" style="text-align:center; padding:20px;">Yükleniyor...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tickets-section" class="section">
+            <div class="header"><div><h1 class="page-title">Destek Talepleri</h1></div></div>
+            <div class="card">
+                <table>
+                    <thead><tr><th>No</th><th>Bayi</th><th>Konu</th><th>Durum</th><th>Son Güncelleme</th><th>İşlem</th></tr></thead>
+                    <tbody id="ticketsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="services-section" class="section">
+            <div class="header"><div><h1 class="page-title">Teknik Servis Takip</h1></div></div>
+            <div class="card">
+                <table>
+                    <thead><tr><th>Servis Kodu</th><th>Bayi</th><th>Ürün / Arıza</th><th>Durum</th><th>Tarih</th><th>Güncelle</th></tr></thead>
+                    <tbody id="servicesTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="dealerModal">
+        <div class="modal" style="width:500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Hızlı Bayi Ekle</h3>
+                <button onclick="closeModal('dealerModal')" style="background:none; border:none; cursor:pointer; font-size:18px;">&times;</button>
+            </div>
+            <form id="addDealerForm" onsubmit="handleAddDealer(event)">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+                    <div><label style="font-size:13px; font-weight:500; color:#6b7280;">Bayi Kodu</label><input type="text" id="dCode" required class="chat-input" style="width:100%;"></div>
+                    <div><label style="font-size:13px; font-weight:500; color:#6b7280;">Şifre</label><input type="text" id="dPass" value="123456" class="chat-input" style="width:100%;"></div>
+                </div>
+                <div style="margin-bottom:16px;"><label style="font-size:13px; font-weight:500; color:#6b7280;">Firma Adı</label><input type="text" id="dName" required class="chat-input" style="width:100%;"></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+                    <div><label style="font-size:13px; font-weight:500; color:#6b7280;">E-posta</label><input type="email" id="dEmail" class="chat-input" style="width:100%;"></div>
+                    <div><label style="font-size:13px; font-weight:500; color:#6b7280;">Telefon</label><input type="text" id="dPhone" class="chat-input" style="width:100%;"></div>
+                </div>
+                <div style="text-align:right; margin-top:20px;">
+                    <button type="submit" class="btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="chatModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Talep Yanıtla: <span id="chatTicketId" style="color:var(--primary);"></span></h3>
+                <button onclick="closeModal('chatModal')" style="background:none; border:none; cursor:pointer; font-size:18px;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="chat-container" id="chatMessages"></div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Yanıtınızı yazın...">
+                <button class="chat-send-btn" onclick="sendReply()">GÖNDER</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- NAVIGATION ---
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.getElementById(id + '-section').classList.add('active');
+
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (id === 'dashboard') loadDashboard();
+            if (id === 'tickets') loadTickets();
+            if (id === 'services') loadServices();
+        }
+
+        // --- HELPERS ---
+        function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(p); }
+        function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+        function getBadge(status) {
+            const s = status ? status.toLowerCase() : '';
+            if (s.includes('pending') || s.includes('bekle') || s.includes('open')) return '<span class="badge badge-warning">' + status + '</span>';
+            if (s.includes('complete') || s.includes('teslim') || s.includes('answer')) return '<span class="badge badge-success">' + status + '</span>';
+            return '<span class="badge badge-info">' + status + '</span>';
+        }
+
+        // --- 1. DASHBOARD ---
+        async function loadDashboard() {
+            try {
+                const res = await fetch('/api/admin/dashboard-stats');
+                const data = await res.json();
+
+                document.getElementById('statRevenue').textContent = formatPrice(data.totalRevenue);
+                document.getElementById('statDealers').textContent = data.activeDealers;
+                document.getElementById('statTickets').textContent = data.openTickets;
+                document.getElementById('statServices').textContent = data.pendingServices;
+
+                document.getElementById('recentOrdersTable').innerHTML = data.recentOrders.map(o => `
+                        <tr>
+                            <td style="font-weight:600;">${o.id}</td>
+                            <td>${o.dealer}</td>
+                            <td>${formatDate(o.date)}</td>
+                            <td>${formatPrice(o.total)}</td>
+                            <td>${getBadge(o.status)}</td>
+                            <td><button style="border:none;background:none;cursor:pointer;color:var(--text-light);"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                    `).join('');
+            } catch (err) { console.error(err); }
+        }
+
+        // --- 2. TICKETS ---
+        async function loadTickets() {
+            const res = await fetch('/api/admin/tickets');
+            const data = await res.json();
+            document.getElementById('ticketsTable').innerHTML = data.map(t => `
+                    <tr>
+                        <td><b>${t.ticketNumber}</b></td>
+                        <td>${t.dealer}</td>
+                        <td>${t.subject}</td>
+                        <td>${getBadge(t.status)}</td>
+                        <td>${t.lastUpdate}</td>
+                        <td><button class="btn-primary" style="padding:6px 12px; font-size:12px;" onclick="openChat('${t.ticketNumber}')">Yanıtla</button></td>
+                    </tr>
+                `).join('');
+        }
+
+        // --- 3. SERVICES ---
+        async function loadServices() {
+            const res = await fetch('/api/admin/services');
+            const data = await res.json();
+            document.getElementById('servicesTable').innerHTML = data.map(s => `
+                    <tr>
+                        <td style="font-family:monospace; color:var(--primary);">${s.code}</td>
+                        <td><b>${s.dealer}</b></td>
+                        <td>
+                            <div style="font-weight:600;">${s.product}</div>
+                            <div style="font-size:12px; color:#6b7280;">${s.issueDescription}</div>
+                        </td>
+                        <td>${getBadge(s.status)}</td>
+                        <td>${s.date}</td>
+                        <td>
+                            <select onchange="updateService('${s.code}', this.value)" style="padding:6px; border-radius:6px; border:1px solid #e5e7eb;">
+                                <option value="waiting" ${s.status === 'waiting' ? 'selected' : ''}>Bekliyor</option>
+                                <option value="progress" ${s.status === 'progress' ? 'selected' : ''}>İşlemde</option>
+                                <option value="testing" ${s.status === 'testing' ? 'selected' : ''}>Testte</option>
+                                <option value="completed" ${s.status === 'completed' ? 'selected' : ''}>Tamamlandı</option>
+                            </select>
+                        </td>
+                    </tr>
+                `).join('');
+        }
+
+        // --- ACTIONS ---
+        let currentTicketId = null;
+        async function openChat(id) {
+            currentTicketId = id;
+            document.getElementById('chatTicketId').textContent = id;
+            document.getElementById('chatModal').style.display = 'flex';
+
+            const res = await fetch(`/api/admin/ticket/${id}`);
+            const data = await res.json();
+
+            document.getElementById('chatMessages').innerHTML = data.messages.map(m => `
+                    <div class="msg ${m.isAgent ? 'msg-out' : 'msg-in'}">
+                        ${m.message}
+                        <span class="msg-time">${m.time}</span>
+                    </div>
+                `).join('');
+        }
+
+        async function sendReply() {
+            const msg = document.getElementById('chatInput').value;
+            if (!msg) return;
+
+            await fetch('/api/admin/ticket/reply', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticketNumber: currentTicketId, message: msg })
+            });
+            document.getElementById('chatInput').value = '';
+            openChat(currentTicketId);
+            loadTickets();
+        }
+
+        async function updateService(code, status) {
+            await fetch('/api/admin/service/update', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ serviceCode: code, newStatus: status })
+            });
+            alert('Durum güncellendi');
+            loadServices();
+        }
+
+        // --- DEALER ADD ---
+        function openDealerModal() { document.getElementById('dealerModal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        async function handleAddDealer(e) {
+            e.preventDefault();
+            const dealer = {
+                dealerCode: document.getElementById('dCode').value,
+                password: document.getElementById('dPass').value,
+                fullName: document.getElementById('dName').value,
+                email: document.getElementById('dEmail').value,
+                phone: document.getElementById('dPhone').value,
+                address: "Merkez"
+            };
+
+            const res = await fetch('/api/admin/dealers', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dealer)
+            });
+
+            if (res.ok) {
+                alert('Bayi eklendi');
+                closeModal('dealerModal');
+                loadDashboard();
+            } else {
+                alert('Hata oluştu');
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // START
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ürünler - B2B Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0a0e1a;
+            --dark-light: #141824;
+            --dark-lighter: #1e2330;
+            --glass-bg: rgba(255,255,255,0.02);
+            --glass-border: rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter',sans-serif;
+            background: var(--dark);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* STANDART SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark-light);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            padding: 0 24px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+            .menu-section:first-child {
+                margin-top: 0;
+            }
+
+        /* SIDEBAR KAYMA DÜZELTMESİ */
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+            .menu-item:hover {
+                background: var(--glass-bg);
+                color: #fff;
+            }
+
+            .menu-item.active {
+                background: rgba(59,130,246,0.1);
+                color: var(--primary);
+                border-left: 3px solid var(--primary);
+            }
+
+        .menu-icon {
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,var(--primary),var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            height: 80px;
+            background: var(--dark-light);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 48px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0 48px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+            .search-input:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+            .icon-btn:hover {
+                background: var(--glass-border);
+                color: #fff;
+            }
+
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--danger);
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* CART DROPDOWN */
+        .cart-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 400px;
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+            overflow: hidden;
+        }
+
+            .cart-dropdown.show {
+                display: block;
+                animation: slideDown 0.3s ease;
+            }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cart-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .cart-header h4 {
+                font-size: 16px;
+                font-weight: 700;
+                margin: 0;
+            }
+
+        .cart-count {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .cart-items-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cart-item-mini {
+            display: flex;
+            gap: 12px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+            .cart-item-mini:hover {
+                background: var(--glass-bg);
+            }
+
+            .cart-item-mini img {
+                width: 50px;
+                height: 50px;
+                border-radius: 8px;
+                object-fit: cover;
+            }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .cart-item-qty {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .cart-item-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .cart-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cart-total-label {
+            color: #94a3b8;
+        }
+
+        .cart-total-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .cart-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .cart-btn {
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .cart-btn-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: #fff;
+        }
+
+        .cart-btn-primary {
+            background: var(--primary);
+            border: none;
+            color: #fff;
+        }
+
+        .cart-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+            .cart-empty i {
+                font-size: 48px;
+                margin-bottom: 12px;
+            }
+
+        /* PAGE CONTENT */
+        .page-container {
+            padding: 32px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* CATEGORY & FILTERS */
+        .category-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 10px 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .category-tab:hover {
+                background: var(--glass-border);
+                color: #fff;
+            }
+
+            .category-tab.active {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: #fff;
+            }
+
+        .category-count {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        .filters-section {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .filter-select {
+            width: 100%;
+            height: 44px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            padding: 0 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+            .filter-select option {
+                background: var(--dark-light);
+            }
+
+        /* PRODUCT GRID */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+            .product-card:hover {
+                transform: translateY(-8px);
+                border-color: var(--primary);
+                box-shadow: 0 20px 40px rgba(59,130,246,0.2);
+            }
+
+            .product-card.out-of-stock {
+                opacity: 0.7;
+            }
+
+        .product-image-wrapper {
+            position: relative;
+            height: 200px;
+            background: var(--dark-lighter);
+            overflow: hidden;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.1);
+        }
+
+        .product-badges {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .badge-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: white;
+        }
+
+        .badge-new {
+            background: rgba(59,130,246,0.9);
+        }
+
+        .badge-hot {
+            background: rgba(239,68,68,0.9);
+        }
+
+        .stock-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+            .stock-indicator.available {
+                background: var(--success);
+                box-shadow: 0 0 12px var(--success);
+            }
+
+            .stock-indicator.low {
+                background: var(--warning);
+                box-shadow: 0 0 12px var(--warning);
+            }
+
+            .stock-indicator.out {
+                background: var(--danger);
+                box-shadow: 0 0 12px var(--danger);
+            }
+
+        .product-body {
+            padding: 20px;
+        }
+
+        .product-category {
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .product-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+            line-height: 1.4;
+            height: 42px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .product-footer {
+            padding: 16px 20px 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .price-current {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stock-count {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+        }
+
+        .btn {
+            height: 44px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                box-shadow: 0 8px 20px rgba(59,130,246,0.4);
+            }
+
+        .btn-icon {
+            width: 44px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: #94a3b8;
+        }
+
+        /* TOAST */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 32px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: all 0.4s;
+            opacity: 0;
+        }
+
+            .toast.show {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            .toast.success {
+                border-left: 4px solid var(--success);
+            }
+
+            .toast.error {
+                border-left: 4px solid var(--danger);
+            }
+
+            .toast.info {
+                border-left: 4px solid var(--primary);
+            }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">B2B Portal</div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section">Ana Menü</div>
+            <a href="dashboard.html" class="menu-item"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="products.html" class="menu-item active"><i class="fas fa-box menu-icon"></i><span>Ürünler</span></a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span></a>
+
+            <div class="menu-section">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item"><i class="fas fa-file-invoice menu-icon"></i><span>Siparişlerim</span></a>
+            <a href="tracking.html" class="menu-item"><i class="fas fa-truck menu-icon"></i><span>Kargo Takip</span></a>
+
+            <div class="menu-section">Finans</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet menu-icon"></i><span>Cari Hesap</span></a>
+            <a href="reports.html" class="menu-item"><i class="fas fa-chart-line menu-icon"></i><span>Raporlar</span></a>
+
+            <div class="menu-section">Destek & Hesap</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools menu-icon"></i><span>Teknik Servis</span></a>
+            <a href="support.html" class="menu-item"><i class="fas fa-headset menu-icon"></i><span>Canlı Destek</span></a>
+            <a href="profile.html" class="menu-item"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
+
+            <a href="login.html" class="menu-item" style="margin-top:auto; color:#ef4444;" onclick="localStorage.clear()">
+                <i class="fas fa-sign-out-alt menu-icon"></i><span>Çıkış Yap</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">AB</div>
+                <div>
+                    <div class="user-name">Ahmet Bilişim</div>
+                    <div class="user-role">BAYI-2025-001</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Ürün, Stok Kodu veya Marka Ara..." id="searchInput">
+            </div>
+            <div class="topbar-actions">
+                <div style="position: relative;">
+                    <button class="icon-btn" id="cartBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="cartBadge">0</span>
+                    </button>
+                    <div class="cart-dropdown" id="cartDropdown">
+                        <div class="cart-header">
+                            <h4>Sepetim</h4>
+                            <span class="cart-count"><span id="cartItemCount">0</span> ürün</span>
+                        </div>
+                        <div class="cart-items-list" id="cartItemsList">
+                            <div class="cart-empty"><i class="fas fa-shopping-cart"></i><p>Sepetiniz boş</p></div>
+                        </div>
+                        <div class="cart-footer">
+                            <div class="cart-total">
+                                <span class="cart-total-label">Toplam</span>
+                                <span class="cart-total-value" id="cartTotal">₺0,00</span>
+                            </div>
+                            <div class="cart-buttons">
+                                <a href="cart.html" class="cart-btn cart-btn-outline">Sepete Git</a>
+                                <a href="cart.html" class="cart-btn cart-btn-primary">Sipariş Ver</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="icon-btn"><i class="fas fa-user-circle"></i></button>
+            </div>
+        </header>
+
+        <div class="toast-container" id="toastContainer"></div>
+
+        <div class="page-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Ürün Kataloğu</h1>
+                    <p class="page-subtitle">Anlık fiyat güncellemeleri ile <span id="totalProductCount">0</span> ürün</p>
+                </div>
+            </div>
+
+            <div class="filters-section">
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label>Marka</label>
+                        <select class="filter-select" id="brandFilter">
+                            <option value="">Tüm Markalar</option>
+                            <option value="AMD">AMD</option>
+                            <option value="Intel">Intel</option>
+                            <option value="NVIDIA">NVIDIA</option>
+                            <option value="MSI">MSI</option>
+                            <option value="ASUS">ASUS</option>
+                            <option value="Corsair">Corsair</option>
+                            <option value="Samsung">Samsung</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Stok Durumu</label>
+                        <select class="filter-select" id="stockFilter">
+                            <option value="">Tümü</option>
+                            <option value="available">Stokta Var</option>
+                            <option value="out">Tükendi</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Sıralama</label>
+                        <select class="filter-select" id="sortFilter">
+                            <option value="newest">Yeniden Eskiye</option>
+                            <option value="price-asc">Fiyat: Düşük-Yüksek</option>
+                            <option value="price-desc">Fiyat: Yüksek-Düşük</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <div style="grid-column:1/-1; text-align:center; padding:40px; color:#64748b;">Yükleniyor...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- GLOBAL DEĞİŞKENLER ---
+        let currentProducts = [];
+        let cart = JSON.parse(localStorage.getItem('b2b_cart')) || [];
+
+        // --- YARDIMCI FONKSİYONLAR ---
+        function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(p); }
+
+        function showToast(title, msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            if (!c) return;
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<div style="font-weight:700; margin-right:10px;">${title}</div><div>${msg}</div>`;
+            c.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+        }
+
+        // --- ÜRÜNLERİ ÇEK ---
+        async function fetchProducts() {
+            try {
+                const response = await fetch('/api/products');
+                if (!response.ok) throw new Error('Veri çekilemedi');
+
+                currentProducts = await response.json();
+
+                document.getElementById('totalProductCount').textContent = currentProducts.length;
+                renderProducts(currentProducts);
+
+            } catch (error) {
+                console.error('Hata:', error);
+                document.getElementById('productsGrid').innerHTML = '<div style="grid-column:1/-1; text-align:center; color:red;">Ürünler yüklenirken hata oluştu.</div>';
+            }
+        }
+
+        // --- ÜRÜNLERİ LİSTELE ---
+        function renderProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            if (products.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#64748b;">Ürün bulunamadı</div>';
+                return;
+            }
+
+            grid.innerHTML = products.map(product => {
+                const stockStatus = product.stock > 0 ? 'available' : 'out';
+                // Resim hatası düzeltmesi: URL yoksa placeholder
+                const imgUrl = product.imageUrl || product.image || 'https://via.placeholder.com/500?text=Urun+Resmi';
+
+                return `
+                        <div class="product-card ${stockStatus === 'out' ? 'out-of-stock' : ''}">
+                            <div class="product-image-wrapper">
+                                <img src="${imgUrl}" class="product-image" alt="${product.title}">
+                                <div class="product-badges">
+                                    ${product.isNew ? '<span class="badge-item badge-new">YENİ</span>' : ''}
+                                </div>
+                                <div class="stock-indicator ${stockStatus}"></div>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-category">${product.category}</div>
+                                <h3 class="product-title">${product.title}</h3>
+                            </div>
+                            <div class="product-footer">
+                                <div class="price-section">
+                                    <div class="price-current">₺${formatPrice(product.price)}</div>
+                                    <div class="stock-info">
+                                        <div class="stock-count" style="color: ${stockStatus === 'out' ? '#ef4444' : '#10b981'}">
+                                            ${product.stock > 0 ? product.stock + ' adet' : 'Tükendi'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary" onclick="addToCart(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
+                                        <i class="fas fa-cart-plus"></i> Sepete Ekle
+                                    </button>
+                                    <button class="btn btn-icon"><i class="far fa-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            }).join('');
+        }
+
+        // --- SEPET İŞLEMLERİ ---
+        function addToCart(productId) {
+            const product = currentProducts.find(p => p.id === productId);
+            if (!product || product.stock === 0) return;
+
+            const existing = cart.find(i => i.id === productId);
+            if (existing) {
+                if (existing.quantity < product.stock) {
+                    existing.quantity++;
+                    showToast('Sepet Güncellendi', `${product.title} miktarı arttırıldı.`);
+                } else {
+                    showToast('Stok Sınırı', 'Maksimum stok adedine ulaştınız.', 'warning');
+                }
+            } else {
+                // Backend'den gelen 'imageUrl' veya 'image' alanını kullan
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.imageUrl || product.image,
+                    quantity: 1,
+                    stock: product.stock
+                });
+                showToast('Eklendi', `${product.title} sepete eklendi.`);
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // Null check yaparak elementlerin varlığını kontrol et
+            const badge = document.getElementById('cartBadge');
+            const sidebarCount = document.getElementById('sidebarCartCount');
+            const dropdownCount = document.getElementById('cartItemCount');
+            const dropdownTotal = document.getElementById('cartTotal');
+            const dropdownList = document.getElementById('cartItemsList');
+
+            if (badge) badge.textContent = totalItems;
+            if (sidebarCount) sidebarCount.textContent = totalItems;
+            if (dropdownCount) dropdownCount.textContent = totalItems;
+            if (dropdownTotal) dropdownTotal.textContent = '₺' + formatPrice(totalPrice);
+
+            if (dropdownList) {
+                if (cart.length === 0) {
+                    dropdownList.innerHTML = '<div class="cart-empty"><i class="fas fa-shopping-cart"></i><p>Sepetiniz boş</p></div>';
+                } else {
+                    dropdownList.innerHTML = cart.map(item => `
+                            <div class="cart-item-mini">
+                                <img src="${item.image || 'https://via.placeholder.com/50'}" alt="">
+                                <div class="cart-item-info">
+                                    <div class="cart-item-name">${item.title}</div>
+                                    <div class="cart-item-qty">${item.quantity} adet</div>
+                                </div>
+                                <div class="cart-item-price">₺${formatPrice(item.price * item.quantity)}</div>
+                            </div>
+                        `).join('');
+                }
+            }
+
+            localStorage.setItem('b2b_cart', JSON.stringify(cart));
+        }
+
+        // --- DROPDOWN AÇ/KAPA ---
+        const cartBtn = document.getElementById('cartBtn');
+        const cartDropdown = document.getElementById('cartDropdown');
+
+        if (cartBtn && cartDropdown) {
+            cartBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cartDropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!cartDropdown.contains(e.target) && e.target !== cartBtn) {
+                    cartDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // --- FİLTRELEME ---
+        function applyFilters() {
+            let filtered = [...currentProducts];
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const brand = document.getElementById('brandFilter').value;
+            const stock = document.getElementById('stockFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+
+            if (search) filtered = filtered.filter(p => p.title.toLowerCase().includes(search));
+            if (brand) filtered = filtered.filter(p => p.brand === brand);
+            if (stock === 'available') filtered = filtered.filter(p => p.stock > 0);
+            if (stock === 'out') filtered = filtered.filter(p => p.stock === 0);
+
+            if (sort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+            else if (sort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+            else filtered.sort((a, b) => (b.isNew === true) - (a.isNew === true)); // Varsayılan: Yeniler önce
+
+            renderProducts(filtered);
+        }
+
+        // Event Listeners for Filters
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('brandFilter').addEventListener('change', applyFilters);
+        document.getElementById('stockFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+        // --- BAŞLAT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+            updateCartUI(); // Sayfa açılınca sepeti yükle
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepetim - B2B Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0a0e1a;
+            --dark-light: #141824;
+            --dark-lighter: #1e2330;
+            --glass-bg: rgba(255,255,255,0.02);
+            --glass-border: rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter',sans-serif;
+            background: var(--dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR TASARIMI (STANDART) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark-light);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            padding: 0 24px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+            .menu-section:first-child {
+                margin-top: 0;
+            }
+
+        /* KAYMAYI ÖNLEYEN CSS */
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent; /* Sabit genişlik için */
+        }
+
+            .menu-item:hover {
+                background: var(--glass-bg);
+                color: #fff;
+            }
+
+            .menu-item.active {
+                background: rgba(59,130,246,0.1);
+                color: var(--primary);
+                border-left: 3px solid var(--primary); /* Sadece renk değişir */
+            }
+
+        .menu-icon {
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        /* İkon sıkışmasın */
+        .menu-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,var(--primary),var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+            .back-btn:hover {
+                color: var(--primary);
+            }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* CART LAYOUT */
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+        }
+
+        .cart-items {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .cart-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .cart-section-title i {
+                color: var(--primary);
+            }
+
+        /* EMPTY STATE */
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* CART ITEM */
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto auto auto;
+            gap: 20px;
+            padding: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: var(--dark-lighter);
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--dark-lighter);
+            border-radius: 10px;
+            padding: 8px 12px;
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--glass-bg);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .qty-btn:hover {
+                background: var(--primary);
+            }
+
+        .qty-value {
+            font-size: 18px;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .price-total {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .remove-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: rgba(239,68,68,0.1);
+            color: var(--danger);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* SUMMARY CARD */
+        .summary-card {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            position: sticky;
+            top: 32px;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .summary-total {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid var(--glass-border);
+        }
+
+            .summary-total .summary-value {
+                font-size: 28px;
+                font-weight: 800;
+                color: var(--primary);
+            }
+
+        .checkout-btn {
+            width: 100%;
+            height: 56px;
+            margin-top: 24px;
+            border: none;
+            background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+            color: #fff;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .checkout-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(59,130,246,0.4);
+            }
+
+            .checkout-btn:disabled {
+                background: #374151;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        /* TOAST */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 32px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: all 0.4s;
+            opacity: 0;
+        }
+
+            .toast.show {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            .toast.success {
+                border-left: 4px solid var(--success);
+            }
+
+            .toast.error {
+                border-left: 4px solid var(--danger);
+            }
+
+            .toast.warning {
+                border-left: 4px solid var(--warning);
+            }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">B2B Portal</div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section">Ana Menü</div>
+            <a href="dashboard.html" class="menu-item"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box menu-icon"></i><span>Ürünler</span></a>
+            <a href="cart.html" class="menu-item active"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span><span class="menu-badge" id="sidebarCartCount">0</span></a>
+
+            <div class="menu-section">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item"><i class="fas fa-file-invoice menu-icon"></i><span>Siparişlerim</span></a>
+            <a href="tracking.html" class="menu-item"><i class="fas fa-truck menu-icon"></i><span>Kargo Takip</span></a>
+
+            <div class="menu-section">Finans</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet menu-icon"></i><span>Cari Hesap</span></a>
+            <a href="reports.html" class="menu-item"><i class="fas fa-chart-line menu-icon"></i><span>Raporlar</span></a>
+
+            <div class="menu-section">Destek & Hesap</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools menu-icon"></i><span>Teknik Servis</span></a>
+            <a href="support.html" class="menu-item"><i class="fas fa-headset menu-icon"></i><span>Canlı Destek</span></a>
+            <a href="profile.html" class="menu-item"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
+
+            <a href="login.html" class="menu-item" style="margin-top:auto; color:#ef4444;" onclick="localStorage.clear()">
+                <i class="fas fa-sign-out-alt menu-icon"></i><span>Çıkış Yap</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">AB</div>
+                <div>
+                    <div class="user-name">Ahmet Bilişim</div>
+                    <div class="user-role">BAYI-2025-001</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="toast-container" id="toastContainer"></div>
+        <div class="page-header">
+            <a href="products.html" class="back-btn"><i class="fas fa-arrow-left"></i> Ürünlere Dön</a>
+            <h1 class="page-title">Sepetim</h1>
+            <p class="page-subtitle" id="cartSummaryText">0 ürün</p>
+        </div>
+        <div class="cart-layout">
+            <div class="cart-items">
+                <h3 class="cart-section-title"><i class="fas fa-shopping-basket"></i> Sepetteki Ürünler</h3>
+                <div id="cartItemsContainer"></div>
+            </div>
+            <div class="summary-card">
+                <h3 class="summary-title"><i class="fas fa-receipt"></i> Sipariş Özeti</h3>
+                <div class="summary-row"><span class="summary-label">Ürün Sayısı</span><span class="summary-value" id="itemCount">0 ürün</span></div>
+                <div class="summary-row"><span class="summary-label">Ara Toplam</span><span class="summary-value" id="subtotal">₺0,00</span></div>
+                <div class="summary-row"><span class="summary-label">KDV (%20)</span><span class="summary-value" id="tax">₺0,00</span></div>
+                <div class="summary-row"><span class="summary-label">Kargo</span><span class="summary-value" id="shipping">₺50,00</span></div>
+                <div class="summary-row summary-total"><span class="summary-label">Genel Toplam</span><span class="summary-value" id="total">₺0,00</span></div>
+                <button class="checkout-btn" id="checkoutBtn" onclick="goToCheckout()"><i class="fas fa-lock"></i> Siparişi Onayla</button>
+                <div style="text-align:center; margin-top:12px;">
+                    <button onclick="clearCart()" style="background:none; border:none; color:#ef4444; font-weight:600; cursor:pointer;">Sepeti Boşalt</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- CART LOGIC ---
+        let cart = JSON.parse(localStorage.getItem('b2b_cart')) || [];
+        const FREE_SHIPPING = 5000;
+
+        function formatPrice(p) { return p.toLocaleString('tr-TR', { minimumFractionDigits: 2 }); }
+
+        function showToast(title, msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<div style="font-weight:700; margin-right:10px;">${title}</div><div>${msg}</div>`;
+            c.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            const totalItems = cart.reduce((s, i) => s + i.quantity, 0);
+            document.getElementById('sidebarCartCount').textContent = totalItems;
+            document.getElementById('cartSummaryText').textContent = `${totalItems} ürün`;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="empty-cart"><div class="empty-icon">🛒</div><h3 class="empty-title">Sepetiniz Boş</h3><p class="empty-text">Henüz ürün eklemediniz.</p><a href="products.html" class="empty-btn">Alışverişe Başla</a></div>`;
+                updateSummary();
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.image || 'https://via.placeholder.com/100'}" class="item-image">
+                        <div>
+                            <h4 class="item-title">${item.title}</h4>
+                            <div style="font-size:12px; color:#64748b;">Stok Kodu: ${item.id}</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="qty-btn" onclick="updateQty('${item.id}', ${item.quantity - 1})"><i class="fas fa-minus"></i></button>
+                            <span class="qty-value">${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQty('${item.id}', ${item.quantity + 1})"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="price-total">₺${formatPrice(item.price * item.quantity)}</div>
+                        <button class="remove-btn" onclick="removeItem('${item.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                `).join('');
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const totalItems = cart.reduce((s, i) => s + i.quantity, 0);
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
+            const tax = subtotal * 0.20;
+            const shipping = subtotal >= FREE_SHIPPING ? 0 : 50;
+            const total = subtotal + tax + shipping;
+
+            document.getElementById('itemCount').textContent = `${totalItems} ürün`;
+            document.getElementById('subtotal').textContent = `₺${formatPrice(subtotal)}`;
+            document.getElementById('tax').textContent = `₺${formatPrice(tax)}`;
+            document.getElementById('shipping').textContent = shipping === 0 ? 'ÜCRETSİZ' : `₺${formatPrice(shipping)}`;
+            document.getElementById('total').textContent = `₺${formatPrice(total)}`;
+            document.getElementById('checkoutBtn').disabled = cart.length === 0;
+
+            localStorage.setItem('b2b_cart', JSON.stringify(cart));
+        }
+
+        function updateQty(id, newQty) {
+            if (newQty <= 0) { removeItem(id); return; }
+            const item = cart.find(i => String(i.id) === String(id));
+            if (item) {
+                item.quantity = newQty;
+                renderCart();
+            }
+        }
+
+        function removeItem(id) {
+            if (confirm('Ürünü silmek istiyor musunuz?')) {
+                cart = cart.filter(i => String(i.id) !== String(id));
+                renderCart();
+            }
+        }
+
+        function clearCart() {
+            if (confirm('Sepeti tamamen boşaltmak istiyor musunuz?')) {
+                cart = [];
+                renderCart();
+            }
+        }
+
+        async function goToCheckout() {
+            if (cart.length === 0) return;
+
+            const btn = document.getElementById('checkoutBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
+
+            const dealerCode = localStorage.getItem('dealer_code');
+            if (!dealerCode) {
+                showToast('Hata', 'Oturum süreniz dolmuş. Tekrar giriş yapın.', 'error');
+                setTimeout(() => window.location.href = 'login.html', 2000);
+                return;
+            }
+
+            const orderData = {
+                dealerCode: dealerCode,
+                items: cart.map(item => ({
+                    productId: parseInt(item.id), // ID'nin sayı olduğundan emin olalım
+                    quantity: item.quantity
+                }))
+            };
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                const responseText = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    result = { error: responseText };
+                }
+
+                if (response.ok) {
+                    showToast('Başarılı', `Siparişiniz alındı! No: ${result.orderId}`, 'success');
+                    localStorage.removeItem('b2b_cart');
+                    cart = [];
+                    renderCart();
+                    setTimeout(() => window.location.href = 'orders.html', 2000);
+                } else {
+                    const errorMsg = result.error || result.message || 'Sipariş oluşturulamadı.';
+                    showToast('Hata', errorMsg, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Hata', 'Sunucu ile iletişim kurulamadı.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+</body>
+</html>

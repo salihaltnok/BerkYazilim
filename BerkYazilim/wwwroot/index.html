@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa - B2B Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--primary:#3b82f6;--primary-dark:#2563eb;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--purple:#8b5cf6;--cyan:#06b6d4;--pink:#ec4899;--dark:#0a0e1a;--dark-light:#141824;--dark-lighter:#1e2330;--glass-bg:rgba(255,255,255,0.02);--glass-border:rgba(255,255,255,0.05);}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--dark);color:#fff;min-height:100vh;}
+        
+        /* SIDEBAR */
+        .sidebar{position:fixed;left:0;top:0;width:280px;height:100vh;background:var(--dark-light);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;z-index:1000;}
+        .sidebar-header{padding:24px;border-bottom:1px solid var(--glass-border);}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;}
+        .logo-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+        .logo-text{font-size:18px;font-weight:700;}
+        .sidebar-menu{flex:1;padding:20px 0;overflow-y:auto;}
+        .menu-section{padding:0 24px;margin-bottom:8px;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;}
+        .menu-item{padding:12px 24px;display:flex;align-items:center;gap:12px;color:#94a3b8;text-decoration:none;transition:all 0.3s;}
+        .menu-item:hover{background:var(--glass-bg);color:#fff;}
+        .menu-item.active{background:rgba(59,130,246,0.1);color:var(--primary);border-left:3px solid var(--primary);}
+        .menu-icon{width:20px;text-align:center;}
+        .menu-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+        .menu-badge.success{background:var(--success);}
+        .menu-badge.warning{background:var(--warning);}
+        .sidebar-footer{padding:20px 24px;border-top:1px solid var(--glass-border);}
+        .user-info{display:flex;align-items:center;gap:12px;}
+        .user-avatar{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--success));display:flex;align-items:center;justify-content:center;font-weight:700;}
+        .user-name{font-size:14px;font-weight:600;}
+        .user-role{font-size:12px;color:#64748b;}
+        
+        /* MAIN */
+        .main-content{margin-left:280px;min-height:100vh;}
+        
+        /* TOPBAR */
+        .topbar{height:80px;background:var(--dark-light);border-bottom:1px solid var(--glass-border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;}
+        .search-container{flex:1;max-width:500px;position:relative;}
+        .search-input{width:100%;height:48px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:0 48px;color:#fff;font-size:14px;}
+        .search-input:focus{outline:none;border-color:var(--primary);}
+        .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#64748b;}
+        .topbar-actions{display:flex;align-items:center;gap:16px;}
+        .icon-btn{width:44px;height:44px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#94a3b8;cursor:pointer;transition:all 0.3s;position:relative;}
+        .icon-btn:hover{background:var(--glass-border);color:#fff;}
+        .badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--danger);border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+        
+        /* PAGE CONTENT */
+        .page-container{padding:32px;}
+        
+        /* WELCOME BANNER */
+        .welcome-banner{background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:20px;padding:32px;margin-bottom:32px;position:relative;overflow:hidden;}
+        .welcome-banner::before{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:rgba(255,255,255,0.1);border-radius:50%;}
+        .welcome-banner::after{content:'';position:absolute;bottom:-30%;left:20%;width:200px;height:200px;background:rgba(255,255,255,0.05);border-radius:50%;}
+        .welcome-content{position:relative;z-index:1;}
+        .welcome-title{font-size:28px;font-weight:800;margin-bottom:8px;}
+        .welcome-subtitle{font-size:14px;opacity:0.9;margin-bottom:20px;}
+        .welcome-stats{display:flex;gap:32px;}
+        .welcome-stat{background:rgba(255,255,255,0.15);padding:16px 24px;border-radius:12px;}
+        .welcome-stat-value{font-size:24px;font-weight:800;}
+        .welcome-stat-label{font-size:12px;opacity:0.8;}
+        
+        /* QUICK ACTIONS */
+        .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+        .quick-action{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:16px;padding:24px;text-align:center;cursor:pointer;transition:all 0.3s;text-decoration:none;color:#fff;}
+        .quick-action:hover{transform:translateY(-4px);border-color:var(--primary);box-shadow:0 10px 30px rgba(59,130,246,0.2);}
+        .quick-action-icon{width:56px;height:56px;margin:0 auto 16px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+        .quick-action-icon.blue{background:rgba(59,130,246,0.2);color:var(--primary);}
+        .quick-action-icon.green{background:rgba(16,185,129,0.2);color:var(--success);}
+        .quick-action-icon.purple{background:rgba(139,92,246,0.2);color:var(--purple);}
+        .quick-action-icon.cyan{background:rgba(6,182,212,0.2);color:var(--cyan);}
+        .quick-action-icon.pink{background:rgba(236,72,153,0.2);color:var(--pink);}
+        .quick-action-icon.yellow{background:rgba(245,158,11,0.2);color:var(--warning);}
+        .quick-action-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+        .quick-action-desc{font-size:12px;color:#64748b;}
+        
+        /* SECTION HEADER */
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+        .section-title{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;}
+        .section-title i{color:var(--primary);}
+        .section-link{color:var(--primary);font-size:14px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px;}
+        .section-link:hover{text-decoration:underline;}
+        
+        /* GRID LAYOUTS */
+        .main-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:32px;}
+        .full-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px;}
+        
+        /* CAMPAIGN BANNER */
+        .campaign-banner{background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:16px;padding:24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;position:relative;overflow:hidden;}
+        .campaign-banner::before{content:'🔥';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:80px;opacity:0.2;}
+        .campaign-content h3{font-size:22px;font-weight:800;margin-bottom:6px;}
+        .campaign-content p{font-size:14px;opacity:0.9;}
+        .campaign-btn{padding:12px 24px;background:#fff;color:#ef4444;border:none;border-radius:10px;font-weight:700;cursor:pointer;position:relative;z-index:1;}
+        .campaign-btn:hover{transform:scale(1.05);}
+        
+        /* PRODUCT CARDS - BEST SELLERS */
+        .product-card{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:16px;overflow:hidden;transition:all 0.3s;}
+        .product-card:hover{transform:translateY(-6px);border-color:var(--primary);box-shadow:0 15px 40px rgba(59,130,246,0.15);}
+        .product-image{height:160px;background:var(--dark-lighter);position:relative;overflow:hidden;}
+        .product-image img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
+        .product-card:hover .product-image img{transform:scale(1.1);}
+        .product-badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px;}
+        .badge-item{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;}
+        .badge-hot{background:var(--danger);}
+        .badge-new{background:var(--primary);}
+        .badge-discount{background:var(--success);}
+        .stock-dot{position:absolute;top:10px;right:10px;width:12px;height:12px;border-radius:50%;animation:pulse 2s infinite;}
+        .stock-dot.available{background:var(--success);box-shadow:0 0 10px var(--success);}
+        .stock-dot.low{background:var(--warning);box-shadow:0 0 10px var(--warning);}
+        .stock-dot.out{background:var(--danger);animation:none;}
+        @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.7;transform:scale(1.2);}}
+        .product-body{padding:16px;}
+        .product-category{font-size:11px;color:var(--primary);font-weight:600;text-transform:uppercase;margin-bottom:6px;}
+        .product-title{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.4;height:40px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+        .product-footer{padding:12px 16px;border-top:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;}
+        .product-price{font-size:18px;font-weight:800;color:var(--primary);}
+        .product-price-old{font-size:12px;color:#64748b;text-decoration:line-through;margin-left:8px;}
+        .product-stock{font-size:11px;color:#64748b;}
+        .product-stock.available{color:var(--success);}
+        .product-stock.low{color:var(--warning);}
+        .product-stock.out{color:var(--danger);}
+        .add-cart-btn{width:36px;height:36px;background:var(--primary);border:none;border-radius:8px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
+        .add-cart-btn:hover{background:var(--primary-dark);transform:scale(1.1);}
+        .add-cart-btn:disabled{background:#374151;cursor:not-allowed;transform:none;}
+        
+        /* INFO CARDS */
+        .info-card{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:16px;padding:20px;}
+        .info-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+        .info-card-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;}
+        .info-card-title i{color:var(--primary);}
+        
+        /* ACCOUNT SUMMARY */
+        .account-item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--glass-border);}
+        .account-item:last-child{border-bottom:none;}
+        .account-label{color:#94a3b8;font-size:13px;}
+        .account-value{font-weight:600;font-size:14px;}
+        .account-value.danger{color:var(--danger);}
+        .account-value.success{color:var(--success);}
+        .account-value.warning{color:var(--warning);}
+        
+        /* RECENT ORDERS */
+        .order-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--glass-border);}
+        .order-item:last-child{border-bottom:none;}
+        .order-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+        .order-icon.delivered{background:rgba(16,185,129,0.2);color:var(--success);}
+        .order-icon.shipped{background:rgba(139,92,246,0.2);color:var(--purple);}
+        .order-icon.processing{background:rgba(59,130,246,0.2);color:var(--primary);}
+        .order-icon.pending{background:rgba(245,158,11,0.2);color:var(--warning);}
+        .order-info{flex:1;}
+        .order-id{font-size:13px;font-weight:600;}
+        .order-date{font-size:11px;color:#64748b;}
+        .order-amount{font-size:14px;font-weight:700;color:var(--primary);}
+        
+        /* ANNOUNCEMENTS */
+        .announcement-item{padding:12px 0;border-bottom:1px solid var(--glass-border);}
+        .announcement-item:last-child{border-bottom:none;}
+        .announcement-date{font-size:11px;color:var(--primary);margin-bottom:4px;}
+        .announcement-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+        .announcement-desc{font-size:12px;color:#94a3b8;}
+        
+        /* CATEGORIES GRID */
+        .categories-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:32px;}
+        .category-card{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s;text-decoration:none;color:#fff;}
+        .category-card:hover{transform:translateY(-4px);border-color:var(--primary);background:rgba(59,130,246,0.1);}
+        .category-icon{width:48px;height:48px;margin:0 auto 12px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--glass-bg);}
+        .category-name{font-size:13px;font-weight:600;margin-bottom:4px;}
+        .category-count{font-size:11px;color:#64748b;}
+        
+        /* BRANDS SLIDER */
+        .brands-section{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:16px;padding:24px;margin-bottom:32px;}
+        .brands-grid{display:flex;gap:24px;overflow-x:auto;padding:10px 0;}
+        .brand-item{min-width:100px;height:60px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#94a3b8;transition:all 0.3s;}
+        .brand-item:hover{border-color:var(--primary);color:var(--primary);}
+        
+        /* TOAST */
+        .toast-container{position:fixed;top:100px;right:32px;z-index:99999;display:flex;flex-direction:column;gap:12px;}
+        .toast{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);min-width:320px;transform:translateX(120%);transition:all 0.4s;opacity:0;}
+        .toast.show{transform:translateX(0);opacity:1;}
+        .toast.success{border-left:4px solid var(--success);}
+        .toast.info{border-left:4px solid var(--primary);}
+        .toast-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+        .toast.success .toast-icon{background:rgba(16,185,129,0.2);color:var(--success);}
+        .toast.info .toast-icon{background:rgba(59,130,246,0.2);color:var(--primary);}
+        .toast-content{flex:1;}
+        .toast-title{font-size:14px;font-weight:700;}
+        .toast-message{font-size:12px;color:#94a3b8;}
+        .toast-action{margin-left:auto;}
+        .toast-btn{padding:6px 12px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:6px;color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;}
+        
+        /* RESPONSIVE */
+        @media(max-width:1400px){.full-grid{grid-template-columns:repeat(3,1fr);}.categories-grid{grid-template-columns:repeat(4,1fr);}}
+        @media(max-width:1200px){.main-grid{grid-template-columns:1fr;}.quick-actions{grid-template-columns:repeat(3,1fr);}}
+        @media(max-width:1024px){.sidebar{transform:translateX(-280px);}.main-content{margin-left:0;}.full-grid{grid-template-columns:repeat(2,1fr);}.categories-grid{grid-template-columns:repeat(3,1fr);}}
+        @media(max-width:768px){.page-container{padding:16px;}.quick-actions{grid-template-columns:repeat(2,1fr);}.full-grid{grid-template-columns:1fr;}.categories-grid{grid-template-columns:repeat(2,1fr);}.welcome-stats{flex-direction:column;gap:12px;}}
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo"><div class="logo-icon">🚀</div><div class="logo-text">B2B Portal</div></a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section">Ana Menü</div>
+            <a href="index.html" class="menu-item active"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box menu-icon"></i><span>Ürünler</span><span class="menu-badge success">32</span></a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span><span class="menu-badge" id="sidebarCartCount">0</span></a>
+            
+            <div class="menu-section" style="margin-top:20px;">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item"><i class="fas fa-file-invoice menu-icon"></i><span>Siparişlerim</span></a>
+            <a href="tracking.html" class="menu-item"><i class="fas fa-truck menu-icon"></i><span>Kargo Takip</span></a>
+            
+            <div class="menu-section" style="margin-top:20px;">Finans</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet menu-icon"></i><span>Cari Hesap</span></a>
+            <a href="reports.html" class="menu-item"><i class="fas fa-chart-line menu-icon"></i><span>Raporlar</span></a>
+            
+            <div class="menu-section" style="margin-top:20px;">Destek</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools menu-icon"></i><span>Teknik Servis</span><span class="menu-badge warning">3</span></a>
+            <a href="support.html" class="menu-item"><i class="fas fa-headset menu-icon"></i><span>Canlı Destek</span></a>
+            
+            <div class="menu-section" style="margin-top:20px;">Hesap</div>
+            <a href="profile.html" class="menu-item"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <a href="profile.html"><div class="user-avatar">AB</div></a>
+                <div><div class="user-name">Ahmet Bilişim</div><div class="user-role">BAYI-2025-001</div></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Ürün, stok kodu veya marka ara..." id="globalSearch">
+            </div>
+            <div class="topbar-actions">
+                <div class="icon-btn"><i class="fas fa-bell"></i><span class="badge">3</span></div>
+                <a href="cart.html" class="icon-btn"><i class="fas fa-shopping-cart"></i><span class="badge" id="cartBadge">0</span></a>
+                <a href="profile.html" class="icon-btn"><i class="fas fa-user-circle"></i></a>
+            </div>
+        </header>
+
+        <!-- Toast Container -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- Page Content -->
+        <div class="page-container">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <h1 class="welcome-title">Hoş Geldiniz, Ahmet Bilişim! 👋</h1>
+                    <p class="welcome-subtitle">B2B Enterprise Platform'a giriş yaptınız. Güncel kampanyaları ve fırsatları kaçırmayın!</p>
+                    <div class="welcome-stats">
+                        <div class="welcome-stat">
+                            <div class="welcome-stat-value">₺48.750</div>
+                            <div class="welcome-stat-label">Açık Bakiye</div>
+                        </div>
+                        <div class="welcome-stat">
+                            <div class="welcome-stat-value">24</div>
+                            <div class="welcome-stat-label">Toplam Sipariş</div>
+                        </div>
+                        <div class="welcome-stat">
+                            <div class="welcome-stat-value">45 Gün</div>
+                            <div class="welcome-stat-label">Vade</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="products.html" class="quick-action">
+                    <div class="quick-action-icon blue"><i class="fas fa-box"></i></div>
+                    <div class="quick-action-title">Ürünler</div>
+                    <div class="quick-action-desc">Tüm ürünleri görüntüle</div>
+                </a>
+                <a href="cart.html" class="quick-action">
+                    <div class="quick-action-icon green"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="quick-action-title">Sepetim</div>
+                    <div class="quick-action-desc">Alışverişi tamamla</div>
+                </a>
+                <a href="orders.html" class="quick-action">
+                    <div class="quick-action-icon purple"><i class="fas fa-truck"></i></div>
+                    <div class="quick-action-title">Siparişlerim</div>
+                    <div class="quick-action-desc">Takip ve geçmiş</div>
+                </a>
+                <a href="finance.html" class="quick-action">
+                    <div class="quick-action-icon cyan"><i class="fas fa-wallet"></i></div>
+                    <div class="quick-action-title">Cari Hesap</div>
+                    <div class="quick-action-desc">Bakiye ve ödemeler</div>
+                </a>
+                <a href="reports.html" class="quick-action">
+                    <div class="quick-action-icon pink"><i class="fas fa-chart-pie"></i></div>
+                    <div class="quick-action-title">Raporlar</div>
+                    <div class="quick-action-desc">Analiz ve istatistik</div>
+                </a>
+                <a href="support.html" class="quick-action">
+                    <div class="quick-action-icon yellow"><i class="fas fa-headset"></i></div>
+                    <div class="quick-action-title">Destek</div>
+                    <div class="quick-action-desc">AI destekli yardım</div>
+                </a>
+            </div>
+
+            <!-- Campaign Banner -->
+            <div class="campaign-banner">
+                <div class="campaign-content">
+                    <h3>🎉 Ocak Ayı Kampanyası!</h3>
+                    <p>Seçili ürünlerde %15'e varan indirimler + ₺10.000 üzeri siparişlerde ekstra %15!</p>
+                </div>
+                <button class="campaign-btn" onclick="openCampaignModal()">Kampanyayı Gör</button>
+            </div>
+
+            <!-- Categories -->
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-th-large"></i> Kategoriler</h2>
+                <a href="products.html" class="section-link">Tümünü Gör <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="categories-grid">
+                <a href="products.html?cat=islemci" class="category-card">
+                    <div class="category-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="category-name">İşlemci</div>
+                    <div class="category-count">5 ürün</div>
+                </a>
+                <a href="products.html?cat=ekran-karti" class="category-card">
+                    <div class="category-icon"><i class="fas fa-tv"></i></div>
+                    <div class="category-name">Ekran Kartı</div>
+                    <div class="category-count">5 ürün</div>
+                </a>
+                <a href="products.html?cat=anakart" class="category-card">
+                    <div class="category-icon"><i class="fas fa-server"></i></div>
+                    <div class="category-name">Anakart</div>
+                    <div class="category-count">4 ürün</div>
+                </a>
+                <a href="products.html?cat=ram" class="category-card">
+                    <div class="category-icon"><i class="fas fa-memory"></i></div>
+                    <div class="category-name">RAM</div>
+                    <div class="category-count">4 ürün</div>
+                </a>
+                <a href="products.html?cat=ssd" class="category-card">
+                    <div class="category-icon"><i class="fas fa-hdd"></i></div>
+                    <div class="category-name">SSD</div>
+                    <div class="category-count">4 ürün</div>
+                </a>
+                <a href="products.html?cat=psu" class="category-card">
+                    <div class="category-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="category-name">Güç Kaynağı</div>
+                    <div class="category-count">3 ürün</div>
+                </a>
+            </div>
+
+            <!-- Best Sellers -->
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-fire"></i> Çok Satanlar</h2>
+                <a href="products.html" class="section-link">Tümünü Gör <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="full-grid" id="bestSellersGrid">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- Main Grid: Account + Orders -->
+            <div class="main-grid">
+                <!-- Account Summary -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <h3 class="info-card-title"><i class="fas fa-wallet"></i> Cari Hesap Özeti</h3>
+                        <a href="finance.html" class="section-link">Detay <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="account-item">
+                        <span class="account-label">Toplam Alışveriş</span>
+                        <span class="account-value">₺385.420,00</span>
+                    </div>
+                    <div class="account-item">
+                        <span class="account-label">Toplam Ödeme</span>
+                        <span class="account-value success">₺336.670,00</span>
+                    </div>
+                    <div class="account-item">
+                        <span class="account-label">Açık Bakiye</span>
+                        <span class="account-value danger">₺48.750,00</span>
+                    </div>
+                    <div class="account-item">
+                        <span class="account-label">Kredi Limiti</span>
+                        <span class="account-value">₺100.000,00</span>
+                    </div>
+                    <div class="account-item">
+                        <span class="account-label">Kullanılabilir Limit</span>
+                        <span class="account-value success">₺51.250,00</span>
+                    </div>
+                    <div class="account-item">
+                        <span class="account-label">Vade Durumu</span>
+                        <span class="account-value warning">45 Gün (Limit: 60)</span>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <h3 class="info-card-title"><i class="fas fa-clock"></i> Son Siparişler</h3>
+                        <a href="orders.html" class="section-link">Tümü <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon processing"><i class="fas fa-cog"></i></div>
+                        <div class="order-info"><div class="order-id">SIP-2025-0024</div><div class="order-date">15 Ocak 2025 - Hazırlanıyor</div></div>
+                        <div class="order-amount">₺70.998</div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon shipped"><i class="fas fa-truck"></i></div>
+                        <div class="order-info"><div class="order-id">SIP-2025-0023</div><div class="order-date">14 Ocak 2025 - Kargoda</div></div>
+                        <div class="order-amount">₺55.996</div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon delivered"><i class="fas fa-check"></i></div>
+                        <div class="order-info"><div class="order-id">SIP-2025-0022</div><div class="order-date">12 Ocak 2025 - Teslim</div></div>
+                        <div class="order-amount">₺22.999</div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon delivered"><i class="fas fa-check"></i></div>
+                        <div class="order-info"><div class="order-id">SIP-2025-0021</div><div class="order-date">10 Ocak 2025 - Teslim</div></div>
+                        <div class="order-amount">₺45.392</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements & Brands -->
+            <div class="main-grid">
+                <!-- Announcements -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <h3 class="info-card-title"><i class="fas fa-bullhorn"></i> Duyurular</h3>
+                    </div>
+                    <div class="announcement-item">
+                        <div class="announcement-date">15 Ocak 2025</div>
+                        <div class="announcement-title">🎉 Yeni Ürünler Eklendi!</div>
+                        <div class="announcement-desc">RTX 4080 Super ve Intel 14. nesil işlemciler stoklarımızda.</div>
+                    </div>
+                    <div class="announcement-item">
+                        <div class="announcement-date">10 Ocak 2025</div>
+                        <div class="announcement-title">📦 Kargo Anlaşması</div>
+                        <div class="announcement-desc">MNG Kargo ile anlaşma yapıldı. Tüm siparişlerde ücretsiz kargo!</div>
+                    </div>
+                    <div class="announcement-item">
+                        <div class="announcement-date">05 Ocak 2025</div>
+                        <div class="announcement-title">💳 Yeni Ödeme Seçenekleri</div>
+                        <div class="announcement-desc">Kredi kartı ile 12 taksit imkanı başladı.</div>
+                    </div>
+                </div>
+
+                <!-- Support Status -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <h3 class="info-card-title"><i class="fas fa-tools"></i> Servis Durumu</h3>
+                        <a href="reports.html" class="section-link">Detay <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon" style="background:rgba(245,158,11,0.2);color:var(--warning);"><i class="fas fa-clock"></i></div>
+                        <div class="order-info"><div class="order-id">SRV-2025-008</div><div class="order-date">RTX 4080 - İnceleniyor</div></div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon" style="background:rgba(139,92,246,0.2);color:var(--purple);"><i class="fas fa-cog"></i></div>
+                        <div class="order-info"><div class="order-id">SRV-2025-007</div><div class="order-date">MSI X670E - Parça Bekleniyor</div></div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon delivered"><i class="fas fa-check"></i></div>
+                        <div class="order-info"><div class="order-id">SRV-2025-006</div><div class="order-date">Corsair PSU - Değiştirildi</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brands -->
+            <div class="brands-section">
+                <div class="section-header" style="margin-bottom:16px;">
+                    <h3 class="section-title"><i class="fas fa-building"></i> Distribütör Markalar</h3>
+                </div>
+                <div class="brands-grid">
+                    <div class="brand-item">NVIDIA</div>
+                    <div class="brand-item">AMD</div>
+                    <div class="brand-item">Intel</div>
+                    <div class="brand-item">ASUS</div>
+                    <div class="brand-item">MSI</div>
+                    <div class="brand-item">Gigabyte</div>
+                    <div class="brand-item">Corsair</div>
+                    <div class="brand-item">Samsung</div>
+                    <div class="brand-item">Kingston</div>
+                    <div class="brand-item">NZXT</div>
+                    <div class="brand-item">be quiet!</div>
+                    <div class="brand-item">Noctua</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Best Seller Products (Hot items only)
+        const bestSellers = [
+            {id:2,title:"Intel Core i9-14900K 24-Core",category:"İşlemci",image:"https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400",price:22999,oldPrice:23999,stock:35,isHot:true,isNew:true},
+            {id:6,title:"NVIDIA GeForce RTX 4090 24GB",category:"Ekran Kartı",image:"https://images.unsplash.com/photo-1591488320449-011701bb6704?w=400",price:65999,oldPrice:69999,stock:8,isHot:true,isNew:false},
+            {id:3,title:"AMD Ryzen 7 7800X3D 8-Core",category:"İşlemci",image:"https://images.unsplash.com/photo-1555680202-c31f73531838?w=400",price:14999,oldPrice:15499,stock:23,isHot:true,isNew:false},
+            {id:7,title:"NVIDIA RTX 4080 Super 16GB",category:"Ekran Kartı",image:"https://images.unsplash.com/photo-1591488320449-011701bb6704?w=400",price:42999,oldPrice:44999,stock:18,isHot:true,isNew:true},
+            {id:16,title:"G.Skill Trident Z5 RGB 32GB",category:"RAM",image:"https://images.unsplash.com/photo-1541845157-a6d2d100c931?w=400",price:5999,oldPrice:6499,stock:45,isHot:true,isNew:true},
+            {id:19,title:"Samsung 990 PRO 2TB NVMe",category:"SSD",image:"https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400",price:5299,oldPrice:5699,stock:92,isHot:true,isNew:false},
+            {id:26,title:"NZXT H9 Elite ATX Kasa",category:"Kasa",image:"https://images.unsplash.com/photo-1587202372616-b43abea06c2a?w=400",price:7999,oldPrice:8499,stock:22,isHot:true,isNew:true},
+            {id:29,title:"Noctua NH-D15 Chromax.Black",category:"Soğutucu",image:"https://images.unsplash.com/photo-1587202372616-b43abea06c2a?w=400",price:3999,oldPrice:4299,stock:35,isHot:true,isNew:false}
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('b2b_cart')) || [];
+
+        function formatPrice(p){return p.toLocaleString('tr-TR',{minimumFractionDigits:2});}
+        
+        function getStockStatus(stock){
+            if(stock===0)return{class:'out',text:'Tükendi'};
+            if(stock<=25)return{class:'low',text:`Son ${stock} adet`};
+            return{class:'available',text:`${stock} adet`};
+        }
+
+        function renderBestSellers(){
+            const grid=document.getElementById('bestSellersGrid');
+            grid.innerHTML=bestSellers.map(p=>{
+                const ss=getStockStatus(p.stock);
+                const discount=p.oldPrice>p.price?Math.round((1-p.price/p.oldPrice)*100):0;
+                return`
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${p.image}" alt="${p.title}">
+                        <div class="product-badges">
+                            ${p.isHot?'<div class="badge-item badge-hot">Çok Satan</div>':''}
+                            ${p.isNew?'<div class="badge-item badge-new">Yeni</div>':''}
+                            ${discount>0?`<div class="badge-item badge-discount">%${discount}</div>`:''}
+                        </div>
+                        <div class="stock-dot ${ss.class}"></div>
+                    </div>
+                    <div class="product-body">
+                        <div class="product-category">${p.category}</div>
+                        <div class="product-title">${p.title}</div>
+                    </div>
+                    <div class="product-footer">
+                        <div>
+                            <span class="product-price">₺${formatPrice(p.price)}</span>
+                            ${p.oldPrice>p.price?`<span class="product-price-old">₺${formatPrice(p.oldPrice)}</span>`:''}
+                            <div class="product-stock ${ss.class}">${ss.text}</div>
+                        </div>
+                        <button class="add-cart-btn" onclick="addToCart(${p.id})" ${ss.class==='out'?'disabled':''}><i class="fas fa-cart-plus"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function addToCart(productId){
+            const product=bestSellers.find(p=>p.id===productId);
+            if(!product||product.stock===0)return;
+            const existing=cart.find(i=>i.id===productId);
+            if(existing){
+                if(existing.quantity>=product.stock){showToast('Stok Yetersiz','Maksimum adet sınırına ulaşıldı.','info');return;}
+                existing.quantity++;
+                showToast('Güncellendi',`${product.title} adedi artırıldı.`,'success');
+            }else{
+                cart.push({id:product.id,title:product.title,price:product.price,image:product.image,quantity:1,stock:product.stock});
+                showToast('Sepete Eklendi',`${product.title} sepetinize eklendi.`,'success');
+            }
+            localStorage.setItem('b2b_cart',JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI(){
+            const count=cart.reduce((s,i)=>s+i.quantity,0);
+            document.getElementById('cartBadge').textContent=count;
+            document.getElementById('sidebarCartCount').textContent=count;
+        }
+
+        function showToast(title,msg,type='success'){
+            const c=document.getElementById('toastContainer');
+            const t=document.createElement('div');
+            t.className=`toast ${type}`;
+            t.innerHTML=`<div class="toast-icon"><i class="fas fa-${type==='success'?'check':'info-circle'}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><div class="toast-action"><button class="toast-btn" onclick="window.location.href='cart.html'">Sepete Git</button></div>`;
+            c.appendChild(t);
+            setTimeout(()=>t.classList.add('show'),10);
+            setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},5000);
+        }
+
+        // Global search
+        document.getElementById('globalSearch').addEventListener('keypress',e=>{
+            if(e.key==='Enter'){
+                const q=e.target.value.trim();
+                if(q)window.location.href=`products.html?search=${encodeURIComponent(q)}`;
+            }
+        });
+
+        // Init
+        document.addEventListener('DOMContentLoaded',()=>{
+            renderBestSellers();
+            updateCartUI();
+        });
+    </script>
+
+    <!-- Campaign Modal -->
+    <div class="campaign-modal-overlay" id="campaignModal">
+        <div class="campaign-modal">
+            <div class="campaign-modal-header">
+                <span class="campaign-modal-badge">🔥 SINIRLI SÜRE</span>
+                <h2 class="campaign-modal-title">Ocak Ayı Kampanyası!</h2>
+                <p class="campaign-modal-subtitle">Seçili ürünlerde %15'e varan indirim + ekstra fırsatlar</p>
+                <button class="campaign-modal-close" onclick="closeCampaignModal()"><i class="fas fa-times"></i></button>
+                <div class="campaign-timer">
+                    <div class="campaign-timer-item"><div class="campaign-timer-value" id="timerDays">15</div><div class="campaign-timer-label">Gün</div></div>
+                    <div class="campaign-timer-item"><div class="campaign-timer-value" id="timerHours">00</div><div class="campaign-timer-label">Saat</div></div>
+                    <div class="campaign-timer-item"><div class="campaign-timer-value" id="timerMins">00</div><div class="campaign-timer-label">Dakika</div></div>
+                    <div class="campaign-timer-item"><div class="campaign-timer-value" id="timerSecs">00</div><div class="campaign-timer-label">Saniye</div></div>
+                </div>
+            </div>
+            <div class="campaign-modal-body">
+                <div class="campaign-highlight">
+                    <div class="campaign-highlight-icon">💎</div>
+                    <div class="campaign-highlight-content">
+                        <h4>₺10.000 Üzeri Siparişlerde %15 Ekstra İndirim!</h4>
+                        <p>Sepet toplamı ₺10.000'i geçtiğinde otomatik uygulanır</p>
+                        <span class="code">OCAK15</span>
+                    </div>
+                </div>
+                <div class="campaign-section">
+                    <h3 class="campaign-section-title"><i class="fas fa-fire"></i> İndirimli Ürünler</h3>
+                    <div class="campaign-products">
+                        <div class="campaign-product" onclick="addCampaignProduct(campaignProducts[0])">
+                            <div class="campaign-product-img">🎮</div>
+                            <div class="campaign-product-info"><div class="campaign-product-name">NVIDIA GeForce RTX 4090 24GB</div><div class="campaign-product-category">Ekran Kartı</div></div>
+                            <div class="campaign-product-prices"><div class="campaign-product-old">₺52.999</div><div class="campaign-product-new">₺47.699</div><span class="campaign-product-discount">%10</span></div>
+                        </div>
+                        <div class="campaign-product" onclick="addCampaignProduct(campaignProducts[1])">
+                            <div class="campaign-product-img">⚡</div>
+                            <div class="campaign-product-info"><div class="campaign-product-name">Intel Core i9-14900K</div><div class="campaign-product-category">İşlemci</div></div>
+                            <div class="campaign-product-prices"><div class="campaign-product-old">₺24.999</div><div class="campaign-product-new">₺21.249</div><span class="campaign-product-discount">%15</span></div>
+                        </div>
+                        <div class="campaign-product" onclick="addCampaignProduct(campaignProducts[2])">
+                            <div class="campaign-product-img">💾</div>
+                            <div class="campaign-product-info"><div class="campaign-product-name">Samsung 990 PRO 2TB NVMe</div><div class="campaign-product-category">SSD</div></div>
+                            <div class="campaign-product-prices"><div class="campaign-product-old">₺4.299</div><div class="campaign-product-new">₺3.654</div><span class="campaign-product-discount">%15</span></div>
+                        </div>
+                        <div class="campaign-product" onclick="addCampaignProduct(campaignProducts[3])">
+                            <div class="campaign-product-img">🎮</div>
+                            <div class="campaign-product-info"><div class="campaign-product-name">NVIDIA GeForce RTX 4080 Super</div><div class="campaign-product-category">Ekran Kartı</div></div>
+                            <div class="campaign-product-prices"><div class="campaign-product-old">₺42.999</div><div class="campaign-product-new">₺38.699</div><span class="campaign-product-discount">%10</span></div>
+                        </div>
+                        <div class="campaign-product" onclick="addCampaignProduct(campaignProducts[4])">
+                            <div class="campaign-product-img">🧠</div>
+                            <div class="campaign-product-info"><div class="campaign-product-name">G.Skill Trident Z5 RGB 32GB</div><div class="campaign-product-category">RAM</div></div>
+                            <div class="campaign-product-prices"><div class="campaign-product-old">₺4.999</div><div class="campaign-product-new">₺4.249</div><span class="campaign-product-discount">%15</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="campaign-rules">
+                    <h5><i class="fas fa-info-circle"></i> Kampanya Koşulları</h5>
+                    <ul>
+                        <li>Kampanya 31 Ocak 2025 tarihine kadar geçerlidir</li>
+                        <li>₺5.000 üzeri siparişlerde kargo ücretsizdir</li>
+                        <li>OCAK15 kodu ₺10.000 üzeri siparişlerde geçerlidir</li>
+                        <li>Kampanya diğer indirimlerle birleştirilemez</li>
+                        <li>Stoklar ile sınırlıdır</li>
+                    </ul>
+                </div>
+                <div class="campaign-cta">
+                    <a href="products.html" class="campaign-cta-btn primary"><i class="fas fa-shopping-bag"></i> Tüm Ürünleri Gör</a>
+                    <a href="cart.html" class="campaign-cta-btn outline"><i class="fas fa-shopping-cart"></i> Sepete Git</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating AI Chat Widget -->
+    <div class="ai-chat-widget" id="aiWidget">
+        <div class="ai-chat-bubble" onclick="toggleAIWidget()">
+            <div class="ai-bubble-icon">🤖</div>
+            <div class="ai-bubble-pulse"></div>
+        </div>
+        <div class="ai-chat-popup" id="aiPopup">
+            <div class="ai-popup-header">
+                <div class="ai-popup-avatar">🤖</div>
+                <div class="ai-popup-info">
+                    <h4>B2B AI Asistan</h4>
+                    <span><i class="fas fa-circle" style="color:#4ade80;font-size:8px;"></i> Çevrimiçi</span>
+                </div>
+                <button class="ai-popup-close" onclick="toggleAIWidget()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="ai-popup-messages" id="widgetMessages">
+                <div class="ai-popup-message ai">
+                    <div class="ai-msg-avatar">🤖</div>
+                    <div class="ai-msg-content">Merhaba! 👋 Size nasıl yardımcı olabilirim?</div>
+                </div>
+            </div>
+            <div class="ai-popup-suggestions">
+                <button onclick="widgetAsk('Siparişim nerede?')">📦 Sipariş takip</button>
+                <button onclick="widgetAsk('Cari bakiyem?')">💰 Cari hesap</button>
+                <button onclick="widgetAsk('Destek talebi')">🎫 Destek</button>
+            </div>
+            <div class="ai-popup-input">
+                <input type="text" placeholder="Mesajınızı yazın..." id="widgetInput" onkeypress="if(event.key==='Enter')widgetSend()">
+                <button onclick="widgetSend()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .ai-chat-widget{position:fixed;bottom:32px;right:32px;z-index:9999;}
+        .ai-chat-bubble{width:64px;height:64px;background:linear-gradient(135deg,var(--primary),#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 32px rgba(59,130,246,0.4);transition:all 0.3s;position:relative;}
+        .ai-chat-bubble:hover{transform:scale(1.1);}
+        .ai-bubble-icon{font-size:28px;}
+        .ai-bubble-pulse{position:absolute;width:100%;height:100%;border-radius:50%;background:var(--primary);animation:widgetPulse 2s infinite;opacity:0.3;}
+        @keyframes widgetPulse{0%{transform:scale(1);opacity:0.3;}50%{transform:scale(1.3);opacity:0;}100%{transform:scale(1);opacity:0;}}
+        .ai-chat-popup{position:absolute;bottom:80px;right:0;width:380px;background:var(--dark-light);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);display:none;flex-direction:column;}
+        .ai-chat-popup.show{display:flex;animation:popupSlide 0.3s ease;}
+        @keyframes popupSlide{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+        .ai-popup-header{padding:16px 20px;background:linear-gradient(135deg,var(--primary),#06b6d4);display:flex;align-items:center;gap:12px;}
+        .ai-popup-avatar{width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+        .ai-popup-info{flex:1;}
+        .ai-popup-info h4{font-size:14px;font-weight:700;}
+        .ai-popup-info span{font-size:11px;opacity:0.9;display:flex;align-items:center;gap:4px;}
+        .ai-popup-close{width:32px;height:32px;background:rgba(255,255,255,0.1);border:none;border-radius:8px;color:#fff;cursor:pointer;}
+        .ai-popup-messages{height:280px;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+        .ai-popup-message{display:flex;gap:10px;max-width:85%;}
+        .ai-popup-message.user{margin-left:auto;flex-direction:row-reverse;}
+        .ai-msg-avatar{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+        .ai-popup-message.ai .ai-msg-avatar{background:linear-gradient(135deg,var(--primary),#06b6d4);}
+        .ai-popup-message.user .ai-msg-avatar{background:var(--glass-bg);}
+        .ai-msg-content{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.5;}
+        .ai-popup-message.user .ai-msg-content{background:var(--primary);border-color:var(--primary);}
+        .ai-popup-suggestions{padding:12px 16px;border-top:1px solid var(--glass-border);display:flex;gap:8px;flex-wrap:wrap;}
+        .ai-popup-suggestions button{padding:6px 12px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;color:#94a3b8;font-size:11px;cursor:pointer;transition:all 0.3s;}
+        .ai-popup-suggestions button:hover{border-color:var(--primary);color:var(--primary);}
+        .ai-popup-input{padding:12px 16px;border-top:1px solid var(--glass-border);display:flex;gap:10px;}
+        .ai-popup-input input{flex:1;height:40px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:0 14px;color:#fff;font-size:13px;}
+        .ai-popup-input input:focus{outline:none;border-color:var(--primary);}
+        .ai-popup-input button{width:40px;height:40px;background:var(--primary);border:none;border-radius:10px;color:#fff;cursor:pointer;}
+        .ai-typing{display:flex;gap:4px;padding:4px 0;}
+        .ai-typing span{width:6px;height:6px;background:#64748b;border-radius:50%;animation:aiTyping 1.4s infinite;}
+        .ai-typing span:nth-child(2){animation-delay:0.2s;}
+        .ai-typing span:nth-child(3){animation-delay:0.4s;}
+        @keyframes aiTyping{0%,100%{opacity:0.3;transform:translateY(0);}50%{opacity:1;transform:translateY(-3px);}}
+        @media(max-width:480px){.ai-chat-popup{width:calc(100vw - 32px);right:-16px;}}
+        
+        /* Campaign Modal */
+        .campaign-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
+        .campaign-modal-overlay.show{display:flex;}
+        .campaign-modal{background:var(--dark-light);border:1px solid var(--glass-border);border-radius:24px;width:100%;max-width:700px;max-height:90vh;overflow:hidden;animation:modalSlide 0.4s ease;}
+        @keyframes modalSlide{from{opacity:0;transform:scale(0.9) translateY(-20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+        .campaign-modal-header{background:linear-gradient(135deg,var(--primary),var(--purple));padding:28px;text-align:center;position:relative;}
+        .campaign-modal-header::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,0.1);border-radius:50%;}
+        .campaign-modal-badge{display:inline-block;background:rgba(255,255,255,0.2);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:12px;}
+        .campaign-modal-title{font-size:28px;font-weight:800;margin-bottom:8px;position:relative;}
+        .campaign-modal-subtitle{font-size:14px;opacity:0.9;position:relative;}
+        .campaign-modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,0.2);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:16px;transition:all 0.3s;}
+        .campaign-modal-close:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg);}
+        .campaign-modal-body{padding:24px;max-height:calc(90vh - 160px);overflow-y:auto;}
+        .campaign-section{margin-bottom:24px;}
+        .campaign-section-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+        .campaign-section-title i{color:var(--warning);}
+        .campaign-highlight{background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(236,72,153,0.1));border:1px solid rgba(245,158,11,0.3);border-radius:16px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
+        .campaign-highlight-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--warning),var(--pink));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+        .campaign-highlight-content h4{font-size:18px;font-weight:700;margin-bottom:4px;}
+        .campaign-highlight-content p{font-size:13px;color:#94a3b8;}
+        .campaign-highlight-content .code{display:inline-block;background:var(--dark);padding:4px 12px;border-radius:6px;font-family:monospace;color:var(--warning);font-size:14px;margin-top:8px;}
+        .campaign-products{display:grid;grid-template-columns:1fr;gap:12px;}
+        .campaign-product{display:flex;align-items:center;gap:16px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:16px;transition:all 0.3s;cursor:pointer;}
+        .campaign-product:hover{border-color:var(--primary);transform:translateX(4px);}
+        .campaign-product-img{width:64px;height:64px;background:var(--dark);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+        .campaign-product-info{flex:1;}
+        .campaign-product-name{font-size:14px;font-weight:600;margin-bottom:4px;}
+        .campaign-product-category{font-size:12px;color:#64748b;}
+        .campaign-product-prices{text-align:right;}
+        .campaign-product-old{font-size:13px;color:#64748b;text-decoration:line-through;}
+        .campaign-product-new{font-size:18px;font-weight:800;color:var(--success);}
+        .campaign-product-discount{display:inline-block;background:var(--danger);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;margin-top:4px;}
+        .campaign-rules{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:16px;}
+        .campaign-rules h5{font-size:13px;font-weight:600;margin-bottom:12px;color:#94a3b8;}
+        .campaign-rules ul{list-style:none;font-size:13px;color:#94a3b8;}
+        .campaign-rules li{padding:6px 0;padding-left:20px;position:relative;}
+        .campaign-rules li::before{content:'✓';position:absolute;left:0;color:var(--success);}
+        .campaign-cta{display:flex;gap:12px;margin-top:20px;}
+        .campaign-cta-btn{flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.3s;text-decoration:none;}
+        .campaign-cta-btn.primary{background:var(--primary);border:none;color:#fff;}
+        .campaign-cta-btn.primary:hover{background:var(--primary-dark);transform:translateY(-2px);}
+        .campaign-cta-btn.outline{background:transparent;border:1px solid var(--glass-border);color:#fff;}
+        .campaign-cta-btn.outline:hover{border-color:var(--primary);color:var(--primary);}
+        .campaign-timer{display:flex;justify-content:center;gap:12px;margin-top:16px;}
+        .campaign-timer-item{background:var(--dark);padding:10px 16px;border-radius:10px;text-align:center;min-width:60px;}
+        .campaign-timer-value{font-size:24px;font-weight:800;color:var(--warning);}
+        .campaign-timer-label{font-size:10px;color:#64748b;text-transform:uppercase;}
+    </style>
+
+    <script>
+        // Campaign Modal
+        const campaignProducts = [
+            { id: 'gpu-1', name: 'NVIDIA GeForce RTX 4090 24GB', category: 'Ekran Kartı', icon: '🎮', oldPrice: 52999, newPrice: 47699, discount: 10 },
+            { id: 'cpu-1', name: 'Intel Core i9-14900K', category: 'İşlemci', icon: '⚡', oldPrice: 24999, newPrice: 21249, discount: 15 },
+            { id: 'ssd-1', name: 'Samsung 990 PRO 2TB NVMe', category: 'SSD', icon: '💾', oldPrice: 4299, newPrice: 3654, discount: 15 },
+            { id: 'gpu-2', name: 'NVIDIA GeForce RTX 4080 Super', category: 'Ekran Kartı', icon: '🎮', oldPrice: 42999, newPrice: 38699, discount: 10 },
+            { id: 'ram-1', name: 'G.Skill Trident Z5 RGB 32GB', category: 'RAM', icon: '🧠', oldPrice: 4999, newPrice: 4249, discount: 15 }
+        ];
+
+        function openCampaignModal() {
+            document.getElementById('campaignModal').classList.add('show');
+            startCampaignTimer();
+        }
+
+        function closeCampaignModal() {
+            document.getElementById('campaignModal').classList.remove('show');
+        }
+
+        function formatPrice(p) {
+            return p.toLocaleString('tr-TR');
+        }
+
+        function addCampaignProduct(product) {
+            // Sepete ekle
+            let cart = JSON.parse(localStorage.getItem('b2b_cart')) || [];
+            const existing = cart.find(item => item.id === product.id);
+            
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.newPrice,
+                    originalPrice: product.oldPrice,
+                    quantity: 1,
+                    stock: 50,
+                    image: product.icon
+                });
+            }
+            
+            localStorage.setItem('b2b_cart', JSON.stringify(cart));
+            updateCartBadges();
+            showToast('Sepete Eklendi', `${product.name} kampanyalı fiyatla sepete eklendi!`, 'success');
+        }
+
+        function updateCartBadges() {
+            const cart = JSON.parse(localStorage.getItem('b2b_cart')) || [];
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badges = document.querySelectorAll('#cartBadge, #sidebarCartCount');
+            badges.forEach(b => b.textContent = count);
+        }
+
+        function showToast(title, msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<div class="toast-icon"><i class="fas fa-${type === 'success' ? 'check' : 'info-circle'}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>`;
+            c.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 4000);
+        }
+
+        let timerInterval;
+        function startCampaignTimer() {
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + 15); // 15 gün sonra
+            
+            function updateTimer() {
+                const now = new Date();
+                const diff = endDate - now;
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('timerDays').textContent = days;
+                document.getElementById('timerHours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('timerMins').textContent = mins.toString().padStart(2, '0');
+                document.getElementById('timerSecs').textContent = secs.toString().padStart(2, '0');
+            }
+            
+            updateTimer();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Modal dışına tıklayınca kapat
+        document.getElementById('campaignModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'campaignModal') closeCampaignModal();
+        });
+
+        // ESC tuşu ile kapat
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeCampaignModal();
+        });
+
+        // Sayfa yüklendiğinde cart badge güncelle
+        document.addEventListener('DOMContentLoaded', updateCartBadges);
+
+        // AI Widget Functions
+        const widgetResponses = {
+            'sipariş': '📦 Son siparişiniz SIP-2025-0024 "Hazırlanıyor" durumunda. Tahmini teslimat: 17-18 Ocak. Detay için Siparişlerim sayfasını ziyaret edin.',
+            'cari': '💰 Açık bakiyeniz: ₺48.750,00 | Kredi limiti: ₺100.000 | Kullanılabilir: ₺51.250. Ödeme için Finans sayfasını kullanabilirsiniz.',
+            'destek': '🎫 Destek talebi açmak için Destek Merkezi sayfasını ziyaret edin veya 0850 123 45 67 numarasını arayın. 7/24 hizmetinizdeyiz!',
+            'iade': '↩️ İade için: 1) Destek talebi açın 2) Onay alın 3) MNG Kargo ile gönderin. Süre: 14 gün. Detaylı bilgi için Destek Merkezi\'ne bakın.',
+            'taksit': '💳 3, 6, 9 ve 12 taksit seçenekleri mevcut. 3 taksit %0 komisyon! Ödeme için Finans sayfasını ziyaret edin.',
+            'default': '🤔 Bu konuda size yardımcı olmak için Destek Merkezi sayfamızı ziyaret edebilir veya detaylı soru sorabilirsiniz.'
+        };
+
+        function toggleAIWidget() {
+            document.getElementById('aiPopup').classList.toggle('show');
+        }
+
+        function widgetSend() {
+            const input = document.getElementById('widgetInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            addWidgetMessage(msg, 'user');
+            input.value = '';
+            
+            // Show typing
+            const container = document.getElementById('widgetMessages');
+            const typing = document.createElement('div');
+            typing.className = 'ai-popup-message ai';
+            typing.id = 'widgetTyping';
+            typing.innerHTML = '<div class="ai-msg-avatar">🤖</div><div class="ai-msg-content"><div class="ai-typing"><span></span><span></span><span></span></div></div>';
+            container.appendChild(typing);
+            container.scrollTop = container.scrollHeight;
+            
+            setTimeout(() => {
+                typing.remove();
+                const response = getWidgetResponse(msg);
+                addWidgetMessage(response, 'ai');
+            }, 800 + Math.random() * 700);
+        }
+
+        function addWidgetMessage(text, type) {
+            const container = document.getElementById('widgetMessages');
+            const div = document.createElement('div');
+            div.className = `ai-popup-message ${type}`;
+            div.innerHTML = `<div class="ai-msg-avatar">${type === 'ai' ? '🤖' : '👤'}</div><div class="ai-msg-content">${text}</div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function getWidgetResponse(msg) {
+            const lower = msg.toLowerCase();
+            for (const [key, response] of Object.entries(widgetResponses)) {
+                if (key !== 'default' && lower.includes(key)) return response;
+            }
+            return widgetResponses.default;
+        }
+
+        function widgetAsk(question) {
+            document.getElementById('widgetInput').value = question;
+            widgetSend();
+        }
+    </script>
+</body>
+</html>

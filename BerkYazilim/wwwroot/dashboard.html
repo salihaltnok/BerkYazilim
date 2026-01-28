@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - B2B Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0a0e1a;
+            --dark-light: #141824;
+            --dark-lighter: #1e2330;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR TASARIMI */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark-light);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            padding: 0 24px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+            .menu-section:first-child {
+                margin-top: 0;
+            }
+
+        /* SIDEBAR KAYMA SORUNU ÇÖZÜMÜ */
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+            /* ÖNEMLİ: Varsayılan şeffaf kenarlık, kaymayı engeller */
+            border-left: 3px solid transparent;
+        }
+
+            .menu-item:hover {
+                background: var(--glass-bg);
+                color: #fff;
+            }
+
+            .menu-item.active {
+                background: rgba(59, 130, 246, 0.1);
+                color: var(--primary);
+                /* ÖNEMLİ: Sadece renk değişir, genişlik aynı kalır */
+                border-left: 3px solid var(--primary);
+            }
+
+        .menu-icon {
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        /* İkon sıkışmasın diye flex-shrink eklendi */
+        .menu-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--dark-light);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            float: right;
+        }
+
+        /* RECENT ORDERS TABLE */
+        .recent-orders {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px 24px;
+            color: #94a3b8;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">B2B Portal</div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section">Ana Menü</div>
+            <a href="dashboard.html" class="menu-item active"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box menu-icon"></i><span>Ürünler</span></a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span><span class="menu-badge" id="sidebarCartCount">0</span></a>
+
+            <div class="menu-section">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item"><i class="fas fa-file-invoice menu-icon"></i><span>Siparişlerim</span></a>
+            <a href="tracking.html" class="menu-item"><i class="fas fa-truck menu-icon"></i><span>Kargo Takip</span></a>
+
+            <div class="menu-section">Finans</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet menu-icon"></i><span>Cari Hesap</span></a>
+            <a href="reports.html" class="menu-item"><i class="fas fa-chart-line menu-icon"></i><span>Raporlar</span></a>
+
+            <div class="menu-section">Destek & Hesap</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools menu-icon"></i><span>Teknik Servis</span></a>
+            <a href="support.html" class="menu-item"><i class="fas fa-headset menu-icon"></i><span>Canlı Destek</span></a>
+            <a href="profile.html" class="menu-item"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
+
+            <a href="login.html" class="menu-item" style="margin-top:auto; color:#ef4444;" onclick="localStorage.clear()">
+                <i class="fas fa-sign-out-alt menu-icon"></i><span>Çıkış Yap</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="sidebarAvatar">?</div>
+                <div>
+                    <div class="user-name" id="sidebarName">Yükleniyor...</div>
+                    <div class="user-role" id="sidebarCode">...</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <h1 class="page-title">Hoş Geldiniz, <span id="userWelcomeName" style="color:var(--primary);">...</span> 👋</h1>
+                <p class="page-subtitle">Siparişlerinizi ve hesap durumunuzu buradan takip edebilirsiniz.</p>
+            </div>
+            <a href="products.html" class="btn-primary">
+                <i class="fas fa-plus"></i> Yeni Sipariş
+            </a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(59,130,246,0.1); color:var(--primary);"><i class="fas fa-shopping-bag"></i></div>
+                <div class="stat-label">TOPLAM SİPARİŞ</div>
+                <div class="stat-value" id="dashTotalOrders">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(245,158,11,0.1); color:var(--warning);"><i class="fas fa-clock"></i></div>
+                <div class="stat-label">BEKLEYEN</div>
+                <div class="stat-value" id="dashPending">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(16,185,129,0.1); color:var(--success);"><i class="fas fa-wallet"></i></div>
+                <div class="stat-label">TOPLAM HARCAMA</div>
+                <div class="stat-value" id="dashTotalSpent">₺0,00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(139,92,246,0.1); color:#8b5cf6;"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-label">SEPETİM</div>
+                <div class="stat-value" id="dashCartCount">0</div>
+            </div>
+        </div>
+
+        <div class="recent-orders">
+            <div style="padding: 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 18px; font-weight: 700; margin: 0;">Son Siparişler</h3>
+                <a href="orders.html" style="color:var(--primary); text-decoration:none; font-size:14px; font-weight:600;">Tümünü Gör</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sipariş No</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="dashRecentTable">
+                    <tr><td colspan="4" style="text-align:center; padding:30px; color:#64748b;">Yükleniyor...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // --- BAYİ DASHBOARD SCRIPT ---
+
+        function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(p); }
+        function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR'); }
+
+        function getStatusBadge(status) {
+            const map = {
+                'pending': { color: '#f59e0b', text: 'Bekliyor', bg: 'rgba(245,158,11,0.1)' },
+                'beklemede': { color: '#f59e0b', text: 'Bekliyor', bg: 'rgba(245,158,11,0.1)' },
+                'processing': { color: '#3b82f6', text: 'Hazırlanıyor', bg: 'rgba(59,130,246,0.1)' },
+                'hazırlanıyor': { color: '#3b82f6', text: 'Hazırlanıyor', bg: 'rgba(59,130,246,0.1)' },
+                'shipped': { color: '#8b5cf6', text: 'Kargoda', bg: 'rgba(139,92,246,0.1)' },
+                'kargoda': { color: '#8b5cf6', text: 'Kargoda', bg: 'rgba(139,92,246,0.1)' },
+                'delivered': { color: '#10b981', text: 'Teslim Edildi', bg: 'rgba(16,185,129,0.1)' },
+                'teslim edildi': { color: '#10b981', text: 'Teslim Edildi', bg: 'rgba(16,185,129,0.1)' },
+                'cancelled': { color: '#ef4444', text: 'İptal', bg: 'rgba(239,68,68,0.1)' },
+                'iptal': { color: '#ef4444', text: 'İptal', bg: 'rgba(239,68,68,0.1)' }
+            };
+            const key = status ? status.toLowerCase() : 'pending';
+            const s = map[key] || map['pending'];
+            return `<span style="background:${s.bg}; color:${s.color}; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">${s.text}</span>`;
+        }
+
+        async function fetchDashboardData() {
+            // Bayi kodunu al
+            const dealerCode = localStorage.getItem('dealer_code');
+            if (!dealerCode) {
+                console.warn("Bayi kodu bulunamadı, login'e yönlendiriliyor.");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Backend'den gerçek veriyi çek
+                const res = await fetch(`/api/dealer/dashboard/${dealerCode}`);
+                if (!res.ok) throw new Error('Veri alınamadı');
+
+                const data = await res.json();
+
+                // 1. Kullanıcı Bilgileri (Header & Sidebar)
+                document.getElementById('userWelcomeName').textContent = data.userFullName;
+                document.getElementById('sidebarName').textContent = data.userFullName;
+                document.getElementById('sidebarCode').textContent = data.dealerCode || dealerCode;
+
+                // Baş harfleri avatara koy
+                const initials = data.userFullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('sidebarAvatar').textContent = initials;
+
+                // 2. İstatistikler
+                document.getElementById('dashTotalOrders').textContent = data.totalOrders;
+                document.getElementById('dashPending').textContent = data.pendingOrders;
+                document.getElementById('dashTotalSpent').textContent = formatPrice(data.totalSpent);
+
+                // 3. Tablo
+                const tbody = document.getElementById('dashRecentTable');
+                if (data.recentOrders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#64748b;">Henüz siparişiniz yok.</td></tr>';
+                } else {
+                    tbody.innerHTML = data.recentOrders.map(o => `
+                            <tr>
+                                <td style="padding:16px 24px; border-bottom:1px solid var(--glass-border); font-weight:600; color:var(--primary);">${o.orderNumber}</td>
+                                <td style="padding:16px 24px; border-bottom:1px solid var(--glass-border); color:#94a3b8;">${formatDate(o.date)}</td>
+                                <td style="padding:16px 24px; border-bottom:1px solid var(--glass-border); font-weight:600;">${formatPrice(o.amount)}</td>
+                                <td style="padding:16px 24px; border-bottom:1px solid var(--glass-border);">${getStatusBadge(o.status)}</td>
+                            </tr>
+                        `).join('');
+                }
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('dashRecentTable').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#ef4444;">Veriler yüklenirken hata oluştu.</td></tr>';
+            }
+        }
+
+        // Sepet Sayısını LocalStorage'dan al
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('b2b_cart')) || [];
+            const count = cart.reduce((s, i) => s + i.quantity, 0);
+            document.getElementById('dashCartCount').textContent = count;
+            document.getElementById('sidebarCartCount').textContent = count;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDashboardData();
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>

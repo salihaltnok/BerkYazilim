@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelişmiş Raporlar - B2B Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --purple: #8b5cf6;
+            --dark: #0a0e1a;
+            --dark-light: #141824;
+            --dark-lighter: #1e2330;
+            --glass-bg: rgba(255,255,255,0.02);
+            --glass-border: rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR (Standart) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark-light);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            padding: 0 24px;
+            margin: 16px 0 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+            .menu-section:first-child {
+                margin-top: 0;
+            }
+
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+            .menu-item:hover {
+                background: var(--glass-bg);
+                color: #fff;
+            }
+
+            .menu-item.active {
+                background: rgba(59,130,246,0.1);
+                color: var(--primary);
+                border-left: 3px solid var(--primary);
+            }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,var(--primary),var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* TOOLBAR (TABS) */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-light);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+            .tab-btn:hover, .tab-btn.active {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: #fff;
+            }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--glass-bg);
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .date-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Inter';
+            outline: none;
+        }
+
+        /* CONTENT VIEWS (SECTIONS) */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+            .view-section.active {
+                display: block;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .kpi-title {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .kpi-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        /* CHARTS */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-box {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .chart-wrapper {
+            height: 300px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* TABLE */
+        .table-box {
+            background: var(--dark-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+            .data-table th {
+                text-align: left;
+                padding: 16px 24px;
+                color: #94a3b8;
+                font-weight: 600;
+                border-bottom: 1px solid var(--glass-border);
+                background: rgba(255,255,255,0.01);
+            }
+
+            .data-table td {
+                padding: 16px 24px;
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .data-table tr:hover {
+                background: var(--glass-bg);
+            }
+
+        .transaction-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .type-order {
+            background: rgba(239,68,68,0.1);
+            color: var(--danger);
+        }
+
+        .type-payment {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+
+        .amount-pos {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .amount-neg {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        /* LOADING */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10,14,26,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--glass-border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media(max-width:1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:768px) {
+            .main-content {
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading-overlay"><div class="spinner"></div></div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">B2B Portal</div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section">Ana Menü</div>
+            <a href="dashboard.html" class="menu-item"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="products.html" class="menu-item"><i class="fas fa-box menu-icon"></i><span>Ürünler</span></a>
+            <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span></a>
+            <div class="menu-section">Sipariş & Takip</div>
+            <a href="orders.html" class="menu-item"><i class="fas fa-file-invoice menu-icon"></i><span>Siparişlerim</span></a>
+            <a href="tracking.html" class="menu-item"><i class="fas fa-truck menu-icon"></i><span>Kargo Takip</span></a>
+            <div class="menu-section">Finans</div>
+            <a href="finance.html" class="menu-item"><i class="fas fa-wallet menu-icon"></i><span>Cari Hesap</span></a>
+            <a href="reports.html" class="menu-item active"><i class="fas fa-chart-line menu-icon"></i><span>Raporlar</span></a>
+            <div class="menu-section">Destek & Hesap</div>
+            <a href="service.html" class="menu-item"><i class="fas fa-tools menu-icon"></i><span>Teknik Servis</span></a>
+            <a href="profile.html" class="menu-item"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
+            <a href="login.html" class="menu-item" style="margin-top:auto; color:#ef4444;" onclick="localStorage.clear()"><i class="fas fa-sign-out-alt menu-icon"></i><span>Çıkış Yap</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">BY</div>
+                <div><div class="user-name">BERK YAZILIM</div><div class="user-role">BAYI-2025-001</div></div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Gelişmiş Raporlar</h1>
+                <p class="page-subtitle">Finansal durum, satış performansı ve ürün analizleri.</p>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div style="display:flex; gap:8px; overflow-x:auto;">
+                <button class="tab-btn active" onclick="switchTab('overview')">Genel Bakış</button>
+                <button class="tab-btn" onclick="switchTab('sales')">Satışlar</button>
+                <button class="tab-btn" onclick="switchTab('products')">Ürünler</button>
+                <button class="tab-btn" onclick="switchTab('payments')">Ödemeler</button>
+            </div>
+            <div class="date-range">
+                <i class="far fa-calendar-alt" style="color:#94a3b8;"></i>
+                <input type="date" class="date-input" value="2025-01-01">
+                <span style="color:#64748b;">-</span>
+                <input type="date" class="date-input" value="2025-12-31">
+            </div>
+        </div>
+
+        <div id="overview-section" class="view-section active">
+            <div class="kpi-grid">
+                <div class="kpi-card blue">
+                    <div class="kpi-header"><span class="kpi-title">Toplam Ciro</span><div class="kpi-icon" style="background:rgba(59,130,246,0.2); color:var(--primary);"><i class="fas fa-wallet"></i></div></div>
+                    <div class="kpi-value" id="kpiBalance">₺0,00</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> %12.5 <span style="color:#64748b; font-weight:400; margin-left:4px;">geçen aya göre</span></div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-header"><span class="kpi-title">Sipariş Adedi</span><div class="kpi-icon" style="background:rgba(16,185,129,0.2); color:var(--success);"><i class="fas fa-shopping-bag"></i></div></div>
+                    <div class="kpi-value" id="kpiOrderCount">0</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> %5.2 <span style="color:#64748b; font-weight:400;">artış</span></div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-header"><span class="kpi-title">Ödenen Tutar</span><div class="kpi-icon" style="background:rgba(139,92,246,0.2); color:var(--purple);"><i class="fas fa-check-circle"></i></div></div>
+                    <div class="kpi-value" id="kpiTotalPaid">₺0,00</div>
+                    <div class="kpi-trend"><span style="color:#64748b;">Toplam tahsilat</span></div>
+                </div>
+                <div class="kpi-card orange">
+                    <div class="kpi-header"><span class="kpi-title">Açık Hesap (Borç)</span><div class="kpi-icon" style="background:rgba(245,158,11,0.2); color:var(--warning);"><i class="fas fa-clock"></i></div></div>
+                    <div class="kpi-value" id="kpiDebt">₺0,00</div>
+                    <div class="kpi-trend trend-down"><i class="fas fa-exclamation-circle"></i> Ödeme bekleniyor</div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-box">
+                    <div class="chart-header"><h3 class="chart-title">Aylık Satış Performansı</h3></div>
+                    <div class="chart-wrapper"><canvas id="salesChart"></canvas></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-header"><h3 class="chart-title">Kategori Dağılımı</h3></div>
+                    <div class="chart-wrapper"><canvas id="categoryChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sales-section" class="view-section">
+            <div class="chart-box" style="margin-bottom: 24px;">
+                <div class="chart-header"><h3 class="chart-title">Sipariş Durum Analizi</h3></div>
+                <div class="chart-wrapper" style="height: 250px;"><canvas id="statusChart"></canvas></div>
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3 class="chart-title">Satış Geçmişi</h3></div>
+                <div style="padding: 40px; text-align: center; color: #64748b;">
+                    <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 16px;"></i>
+                    <p>Detaylı satış listesi burada görüntülenecek.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="products-section" class="view-section">
+            <div class="table-box">
+                <div class="table-header"><h3 class="chart-title">En Çok Satan Ürünler (Top 5)</h3></div>
+                <table class="data-table">
+                    <thead><tr><th>Ürün Adı</th><th>Kategori</th><th style="text-align:center;">Satış Adedi</th><th style="text-align:right;">Toplam Ciro</th></tr></thead>
+                    <tbody id="topProductsBody">
+                        <tr><td colspan="4" style="text-align:center; padding:20px;">Yükleniyor...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="payments-section" class="view-section">
+            <div class="kpi-grid" id="paymentStatsGrid">
+                <div style="grid-column:1/-1; text-align:center; color:#94a3b8;">Veri yükleniyor...</div>
+            </div>
+        </div>
+
+        <div class="table-box">
+            <div class="table-header">
+                <h3 class="chart-title">Son Finansal Hareketler (Canlı Veri)</h3>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>İşlem Tarihi</th>
+                        <th>Tür</th>
+                        <th>Açıklama</th>
+                        <th style="text-align:right;">Tutar</th>
+                        <th style="text-align:right;">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTableBody">
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+    <script>
+        // --- FORMATTERS ---
+        function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(p); }
+        function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR'); }
+
+        // --- TAB SWITCHING ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById(tabName + '-section');
+            if (target) target.classList.add('active');
+            else document.getElementById('overview-section').classList.add('active');
+        }
+
+        // --- DATA FETCHING ---
+        async function fetchReportData() {
+            const dealerCode = localStorage.getItem('dealer_code');
+            if (!dealerCode) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/dealer/reports/${dealerCode}`);
+                if (!res.ok) throw new Error('Veri çekilemedi');
+                const data = await res.json();
+
+                // 1. KPI GÜNCELLEME (GENEL)
+                document.getElementById('kpiBalance').textContent = '₺' + formatPrice(data.totalShopping);
+                document.getElementById('kpiOrderCount').textContent = data.countOrder;
+                document.getElementById('kpiTotalPaid').textContent = '₺' + formatPrice(data.totalPayment);
+                document.getElementById('kpiDebt').textContent = '₺' + formatPrice(data.balance);
+
+                // 2. GRAFİKLERİ ÇİZ
+                initSalesChart(data.salesChart.labels, data.salesChart.data);
+                initCategoryChart(data.categoryChart.labels, data.categoryChart.data);
+                initStatusChart(data.statusChart.data);
+
+                // 3. TABLOLARI DOLDUR (YENİ EKLENENLER)
+                renderTransactions(data.transactions);
+                renderTopProducts(data.topProducts);
+                renderPaymentStats(data.paymentMethods);
+
+                document.getElementById('loading').style.display = 'none';
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerHTML = '<div style="color:red">Veri yüklenemedi.</div>';
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        // A. Son Hareketler Tablosu
+        function renderTransactions(transactions) {
+            const tbody = document.getElementById('transactionTableBody');
+            if (!transactions || transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Hareket bulunamadı.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = transactions.map(t => {
+                const isOrder = t.type === 'Sipariş';
+                const icon = isOrder ? 'fa-shopping-cart' : 'fa-money-bill-wave';
+                const iconClass = isOrder ? 'type-order' : 'type-payment';
+                const amountClass = isOrder ? 'amount-neg' : 'amount-pos';
+                return `
+                        <tr>
+                            <td>${formatDate(t.date)}</td>
+                            <td><div class="transaction-type"><div class="icon-circle ${iconClass}"><i class="fas ${icon}"></i></div><span>${t.type}</span></div></td>
+                            <td>${t.description}</td>
+                            <td class="${amountClass}" style="text-align:right;">${formatPrice(t.amount)} ₺</td>
+                            <td style="text-align:right;"><span style="font-weight:500; color:#fff;">${t.status}</span></td>
+                        </tr>`;
+            }).join('');
+        }
+
+        // B. En Çok Satan Ürünler Tablosu (CANLI VERİ)
+        function renderTopProducts(products) {
+            const tbody = document.getElementById('topProductsBody');
+            if (!products || products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">Henüz satış yok.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = products.map(p => `
+                    <tr>
+                        <td style="font-weight:600; color:#fff;">${p.name}</td>
+                        <td><span style="background:rgba(59,130,246,0.1); color:var(--primary); padding:2px 8px; border-radius:6px; font-size:11px;">${p.category}</span></td>
+                        <td style="text-align:center;">${p.count}</td>
+                        <td class="amount-pos" style="text-align:right;">₺${formatPrice(p.total)}</td>
+                    </tr>
+                `).join('');
+        }
+
+        // C. Ödeme İstatistikleri (CANLI VERİ)
+        function renderPaymentStats(methods) {
+            const container = document.getElementById('paymentStatsGrid');
+            if (!methods || methods.length === 0) {
+                container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px;">Henüz ödeme yok.</div>';
+                return;
+            }
+
+            // Renk paleti
+            const styles = [
+                { color: 'blue', icon: 'fa-university' }, // Havale
+                { color: 'green', icon: 'fa-credit-card' }, // Kredi Kartı
+                { color: 'orange', icon: 'fa-file-invoice-dollar' }, // Çek
+                { color: 'purple', icon: 'fa-wallet' } // Diğer
+            ];
+
+            container.innerHTML = methods.map((m, index) => {
+                const style = styles[index % styles.length]; // Sırayla renk seç
+                return `
+                    <div class="kpi-card ${style.color}">
+                        <div class="kpi-header">
+                            <span class="kpi-title">${m.method}</span>
+                            <div class="kpi-icon" style="background:rgba(255,255,255,0.1); color:#fff;"><i class="fas ${style.icon}"></i></div>
+                        </div>
+                        <div class="kpi-value">₺${formatPrice(m.total)}</div>
+                        <div class="kpi-trend">Bu yöntemle toplam ödeme</div>
+                    </div>`;
+            }).join('');
+        }
+
+        // --- CHARTS CONFIG ---
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+        Chart.defaults.font.family = 'Inter';
+
+        function initSalesChart(labels, data) {
+            new Chart(document.getElementById('salesChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Satış', data: data, borderColor: '#3b82f6',
+                        backgroundColor: (ctx) => {
+                            const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+                            grad.addColorStop(0, 'rgba(59,130,246,0.5)'); grad.addColorStop(1, 'rgba(59,130,246,0)');
+                            return grad;
+                        }, fill: true, tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } } } }
+            });
+        }
+
+        function initCategoryChart(labels, data) {
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
+            });
+        }
+
+        function initStatusChart(data) {
+            new Chart(document.getElementById('statusChart'), {
+                type: 'bar',
+                data: { labels: ['Tamamlanan', 'Kargoda', 'Bekleyen', 'İptal'], datasets: [{ label: 'Adet', data: data, backgroundColor: ['#10b981', '#8b5cf6', '#f59e0b', '#ef4444'], borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchReportData);
+    </script>
+</body>
+</html>

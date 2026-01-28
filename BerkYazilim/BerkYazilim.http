@@ -1,0 +1,6 @@
+@BerkYazilim_HostAddress = http://localhost:5084
+
+GET {{BerkYazilim_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
