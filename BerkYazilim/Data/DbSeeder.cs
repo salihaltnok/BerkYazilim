@@ -60,6 +60,12 @@ namespace BerkYazilim.Data
                     context.Products.AddRange(products);
                     context.SaveChanges();
                 }
+                // DbSeeder.cs içine Seed metodunun altına ekleyin:
+                if (!context.SystemSettings.Any())
+                {
+                    context.SystemSettings.Add(new Models.SystemSetting()); // Varsayılan değerlerle ekler
+                    context.SaveChanges();
+                }
             }
         }
     }

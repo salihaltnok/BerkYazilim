@@ -16,41 +16,70 @@ namespace BerkYazilim.Controllers
             _context = context;
         }
 
-        // GET: api/profile/1
-        // (Normalde ID'yi token'dan alırız ama şimdilik manuel gönderelim veya sabit 1 alalım)
+        // GET: api/profile/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProfile(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound("Kullanıcı bulunamadı.");
 
-            // Şifreyi güvenlik gereği göndermiyoruz
+            // --- İSTATİSTİKLERİ HESAPLA ---
+            // Kullanıcının toplam sipariş sayısı
+            var orderCount = await _context.Orders.CountAsync(o => o.UserId == id);
+
+            // Kullanıcının toplam harcaması (Ciro)
+            var totalSpend = await _context.Orders
+                                    .Where(o => o.UserId == id)
+                                    .SumAsync(o => o.TotalAmount);
+
             return Ok(new
             {
                 fullName = user.FullName,
                 dealerCode = user.DealerCode,
                 role = user.Role,
-                email = user.Email ?? "demo@berkyazilim.com", // Varsayılan
-                phone = user.Phone ?? "0555 000 00 00",
-                address = user.Address ?? "İstanbul, Türkiye"
+                email = user.Email,
+                phone = user.Phone,
+                address = user.Address,
+                taxOffice = user.TaxOffice,
+                taxNumber = user.TaxNumber,
+                creditLimit = user.CreditLimit, // Kredi limitini de gönderiyoruz
+
+                // Yeni Eklenenler:
+                orderCount = orderCount,
+                totalSpend = totalSpend
             });
         }
 
-        // PUT: api/profile/update-password
-        [HttpPut("update-password")]
-        public async Task<IActionResult> UpdatePassword([FromBody] ChangePasswordRequest request)
+        // PUT: api/profile/5/update-info  <-- ID'yi URL'den alıyoruz
+        [HttpPut("{id}/update-info")]
+        public async Task<IActionResult> UpdateInfo(int id, [FromBody] UpdateProfileRequest request)
         {
-            // Şimdilik ID'si 1 olan kullanıcıyı baz alıyoruz (Ahmet Bilişim)
-            var user = await _context.Users.FindAsync(1);
+            var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound("Kullanıcı bulunamadı.");
 
-            // Eski şifre kontrolü
+            user.FullName = request.FullName;
+            user.Phone = request.Phone;
+            user.Email = request.Email;
+            user.Address = request.Address;
+            user.TaxOffice = request.TaxOffice;
+            user.TaxNumber = request.TaxNumber;
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Profil bilgileri başarıyla güncellendi." });
+        }
+
+        // PUT: api/profile/5/update-password <-- ID'yi URL'den alıyoruz
+        [HttpPut("{id}/update-password")]
+        public async Task<IActionResult> UpdatePassword(int id, [FromBody] ChangePasswordRequest request)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound("Kullanıcı bulunamadı.");
+
             if (user.Password != request.OldPassword)
             {
                 return BadRequest("Mevcut şifreniz hatalı!");
             }
 
-            // Yeni şifreyi kaydet
             user.Password = request.NewPassword;
             await _context.SaveChangesAsync();
 
@@ -58,9 +87,7 @@ namespace BerkYazilim.Controllers
         }
     }
 
-    public class ChangePasswordRequest
-    {
-        public string OldPassword { get; set; } = string.Empty;
-        public string NewPassword { get; set; } = string.Empty;
-    }
+    // Request sınıfları aynı kalabilir (aşağıda tekrar yazmıyorum, User.cs içinde veya burada tanımlı kalabilir)
+    public class ChangePasswordRequest { public string OldPassword { get; set; } public string NewPassword { get; set; } }
+    public class UpdateProfileRequest { public string FullName { get; set; } public string? Phone { get; set; } public string? Email { get; set; } public string? Address { get; set; } public string? TaxOffice { get; set; } public string? TaxNumber { get; set; } }
 }

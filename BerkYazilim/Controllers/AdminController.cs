@@ -64,6 +64,7 @@ namespace BerkYazilim.Controllers
                     u.Email,
                     u.Phone,
                     u.Address,
+                    u.CreditLimit, // <-- YENİ: Limiti de listeye ekledik
                     OrderCount = _context.Orders.Count(o => o.User.Id == u.Id),
                     TotalSpend = _context.Orders.Where(o => o.User.Id == u.Id).Sum(o => o.TotalAmount)
                 })
@@ -75,16 +76,50 @@ namespace BerkYazilim.Controllers
         [HttpPost("dealers")]
         public async Task<IActionResult> CreateDealer([FromBody] User dealer)
         {
+            // --- 1. SİSTEM AYARLARINI ÇEK ---
+            // Veritabanından ayarları okuyoruz
+            var settings = await _context.SystemSettings.FirstOrDefaultAsync();
+
+            // Eğer veritabanında ayar yoksa varsayılan boş bir nesne oluştur (Hata almamak için)
+            if (settings == null) settings = new SystemSetting();
+
+            // --- 2. AYAR KONTROLÜ: YENİ KAYIT İZNİ ---
+            // Eğer panelden "Yeni Bayi Kaydı" kapatıldıysa işlemi durdur.
+            if (!settings.AllowNewDealers)
+            {
+                return BadRequest("Sistem ayarlarında 'Yeni Bayi Kaydı' kapalıdır. Şu an bayi eklenemez.");
+            }
+
+            // --- 3. STANDART KONTROLLER ---
             if (await _context.Users.AnyAsync(u => u.DealerCode == dealer.DealerCode))
                 return BadRequest("Bu bayi kodu zaten kullanılıyor!");
 
             dealer.Role = "Dealer";
+            // Eğer şifre boş geldiyse varsayılanı ata
             if (string.IsNullOrEmpty(dealer.Password)) dealer.Password = "123456";
+
+            // --- 4. AYAR KONTROLÜ: GÜÇLÜ ŞİFRE ---
+            // Eğer panelden "Güçlü Şifre" zorunluluğu açıldıysa kontrol et.
+            if (settings.EnforceStrongPassword)
+            {
+                // Kural: En az 8 karakter VE en az 1 rakam içermeli
+                if (dealer.Password.Length < 8 || !dealer.Password.Any(char.IsDigit))
+                {
+                    return BadRequest("Güvenlik Politikası: Şifre en az 8 karakter olmalı ve en az bir rakam içermelidir.");
+                }
+            }
+
+            // --- 5. AYAR KONTROLÜ: VARSAYILAN KREDİ LİMİTİ ---
+            // Eğer admin özel bir limit girmediyse (0 geldiyse), ayarlardaki varsayılan limiti ver.
+            if (dealer.CreditLimit == 0)
+            {
+                dealer.CreditLimit = settings.DefaultCreditLimit;
+            }
 
             _context.Users.Add(dealer);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Bayi başarıyla oluşturuldu." });
+            return Ok(new { message = "Bayi başarıyla oluşturuldu.", limit = dealer.CreditLimit });
         }
 
         [HttpDelete("dealers/{id}")]

@@ -12,5 +12,6 @@
         public string? TaxOffice { get; set; } // Vergi Dairesi
         public string? TaxNumber { get; set; } // Vergi No
         public string? Address { get; set; }   // Adres
+        public decimal CreditLimit { get; set; } = 0;
     }
 }

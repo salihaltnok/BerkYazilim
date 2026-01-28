@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yönetim Paneli - BerkYazilim SaaS</title>
+    <title>Yönetim Paneli</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -426,7 +426,12 @@
 <body>
 
     <aside class="sidebar">
-        <div class="logo"><i class="fas fa-layer-group"></i> BerkYazilim <span>Admin</span></div>
+        <div class="logo">
+            <i class="fas fa-layer-group"></i>
+            <span id="lbl_PlatformName" style="color:white; margin-left:8px;">BerkYazilim</span>
+            <span style="color:#818cf8; margin-left:4px;">Admin</span>
+        </div>
+
         <nav class="menu">
             <div class="menu-item active" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Dashboard</div>
             <div class="menu-item" onclick="showSection('tickets')"><i class="fas fa-headset"></i> Destek Talepleri</div>
@@ -578,18 +583,18 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label class="form-label">Platform Adı</label>
-                                <input type="text" class="form-input" value="BerkYazilim B2B">
+                                <input type="text" id="set_PlatformName" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Destek E-posta Adresi</label>
-                                <input type="email" class="form-input" value="destek@berkyazilim.com">
+                                <input type="email" id="set_SupportEmail" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Varsayılan Para Birimi</label>
-                                <select class="form-input">
-                                    <option>TRY (₺)</option>
-                                    <option>USD ($)</option>
-                                    <option>EUR (€)</option>
+                                <select id="set_Currency" class="form-input">
+                                    <option value="TRY">TRY (₺)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="EUR">EUR (€)</option>
                                 </select>
                             </div>
                         </div>
@@ -604,7 +609,7 @@
                                     <div class="form-hint">Aktif edilirse bayiler sisteme giriş yapamaz.</div>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox">
+                                    <input type="checkbox" id="set_MaintenanceMode">
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -614,7 +619,7 @@
                                     <div class="form-hint">Dışarıdan kayıt alımını açıp kapatır.</div>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox" checked>
+                                    <input type="checkbox" id="set_AllowNewDealers">
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -624,7 +629,7 @@
                                     <div class="form-hint">Bayiler için min. 8 karakter ve sembol zorunluluğu.</div>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox" checked>
+                                    <input type="checkbox" id="set_EnforceStrongPassword">
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -638,23 +643,20 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label class="form-label">SMTP Sunucusu</label>
-                                <input type="text" class="form-input" value="smtp.office365.com">
+                                <input type="text" id="set_SmtpServer" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Port</label>
-                                <input type="text" class="form-input" value="587">
+                                <input type="number" id="set_SmtpPort" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Kullanıcı Adı</label>
-                                <input type="text" class="form-input" value="info@berkyazilim.com">
+                                <input type="text" id="set_SmtpUser" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Şifre</label>
-                                <input type="password" class="form-input" value="********">
+                                <input type="password" id="set_SmtpPassword" class="form-input">
                             </div>
-                            <button class="btn-primary" style="background:#374151; font-size:12px; padding:8px 16px;">
-                                <i class="fas fa-paper-plane"></i> Test E-postası Gönder
-                            </button>
                         </div>
                     </div>
 
@@ -663,12 +665,12 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label class="form-label">Yeni Bayi Kredi Limiti</label>
-                                <input type="number" class="form-input" value="10000">
+                                <input type="number" id="set_DefaultCreditLimit" class="form-input">
                                 <div class="form-hint">Yeni açılan cari hesaplara tanımlanacak varsayılan limit.</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Varsayılan KDV Oranı (%)</label>
-                                <input type="number" class="form-input" value="20">
+                                <input type="number" id="set_DefaultTaxRate" class="form-input">
                             </div>
                         </div>
                     </div>
@@ -782,11 +784,23 @@
             if (id === 'services') loadServices();
             if (id === 'products') loadProducts();
             if (id === 'dealers') loadDealers();
-            // Settings için loadSettings() gerekirse eklenebilir ama şu an statik
+            if (id === 'settings') loadSettings();
         }
 
         // --- HELPERS ---
-        function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(p); }
+        function formatPrice(p) {
+            // Ayarlardan gelen para birimini kullan
+            return new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: globalCurrency
+            }).format(p);
+        }
+
+        // ÖNEMLİ: loadSettings fonksiyonunun en başta çağrıldığından emin ol
+        document.addEventListener('DOMContentLoaded', async function () {
+            await loadSettings(); // Önce ayarları (para birimini) çek
+            loadDashboard();      // Sonra dashboard verilerini çek (fiyatlar doğru formatlansın)
+        });
         function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
         function getBadge(status) {
             const s = status ? status.toLowerCase() : '';
@@ -805,15 +819,15 @@
                 document.getElementById('statTickets').textContent = data.openTickets;
                 document.getElementById('statServices').textContent = data.pendingServices;
                 document.getElementById('recentOrdersTable').innerHTML = data.recentOrders.map(o => `
-                        <tr>
-                            <td style="font-weight:600;">${o.id}</td>
-                            <td>${o.dealer}</td>
-                            <td>${formatDate(o.date)}</td>
-                            <td>${formatPrice(o.total)}</td>
-                            <td>${getBadge(o.status)}</td>
-                            <td><button style="border:none;background:none;cursor:pointer;color:var(--text-light);"><i class="fas fa-eye"></i></button></td>
-                        </tr>
-                    `).join('');
+                            <tr>
+                                <td style="font-weight:600;">${o.id}</td>
+                                <td>${o.dealer}</td>
+                                <td>${formatDate(o.date)}</td>
+                                <td>${formatPrice(o.total)}</td>
+                                <td>${getBadge(o.status)}</td>
+                                <td><button style="border:none;background:none;cursor:pointer;color:var(--text-light);"><i class="fas fa-eye"></i></button></td>
+                            </tr>
+                        `).join('');
             } catch (err) { console.error(err); }
         }
 
@@ -822,15 +836,15 @@
             const res = await fetch('/api/admin/tickets');
             const data = await res.json();
             document.getElementById('ticketsTable').innerHTML = data.map(t => `
-                    <tr>
-                        <td><b>${t.ticketNumber}</b></td>
-                        <td>${t.dealer}</td>
-                        <td>${t.subject}</td>
-                        <td>${getBadge(t.status)}</td>
-                        <td>${t.lastUpdate}</td>
-                        <td><button class="btn-primary" style="padding:6px 12px; font-size:12px;" onclick="openChat('${t.ticketNumber}')">Yanıtla</button></td>
-                    </tr>
-                `).join('');
+                        <tr>
+                            <td><b>${t.ticketNumber}</b></td>
+                            <td>${t.dealer}</td>
+                            <td>${t.subject}</td>
+                            <td>${getBadge(t.status)}</td>
+                            <td>${t.lastUpdate}</td>
+                            <td><button class="btn-primary" style="padding:6px 12px; font-size:12px;" onclick="openChat('${t.ticketNumber}')">Yanıtla</button></td>
+                        </tr>
+                    `).join('');
         }
 
         // --- SERVICES ---
@@ -838,25 +852,25 @@
             const res = await fetch('/api/admin/services');
             const data = await res.json();
             document.getElementById('servicesTable').innerHTML = data.map(s => `
-                    <tr>
-                        <td style="font-family:monospace; color:var(--primary);">${s.code}</td>
-                        <td><b>${s.dealer}</b></td>
-                        <td>
-                            <div style="font-weight:600;">${s.product}</div>
-                            <div style="font-size:12px; color:#6b7280;">${s.issueDescription}</div>
-                        </td>
-                        <td>${getBadge(s.status)}</td>
-                        <td>${s.date}</td>
-                        <td>
-                            <select onchange="updateService('${s.code}', this.value)" style="padding:6px; border-radius:6px; border:1px solid #e5e7eb;">
-                                <option value="waiting" ${s.status === 'waiting' ? 'selected' : ''}>Bekliyor</option>
-                                <option value="progress" ${s.status === 'progress' ? 'selected' : ''}>İşlemde</option>
-                                <option value="testing" ${s.status === 'testing' ? 'selected' : ''}>Testte</option>
-                                <option value="completed" ${s.status === 'completed' ? 'selected' : ''}>Tamamlandı</option>
-                            </select>
-                        </td>
-                    </tr>
-                `).join('');
+                        <tr>
+                            <td style="font-family:monospace; color:var(--primary);">${s.code}</td>
+                            <td><b>${s.dealer}</b></td>
+                            <td>
+                                <div style="font-weight:600;">${s.product}</div>
+                                <div style="font-size:12px; color:#6b7280;">${s.issueDescription}</div>
+                            </td>
+                            <td>${getBadge(s.status)}</td>
+                            <td>${s.date}</td>
+                            <td>
+                                <select onchange="updateService('${s.code}', this.value)" style="padding:6px; border-radius:6px; border:1px solid #e5e7eb;">
+                                    <option value="waiting" ${s.status === 'waiting' ? 'selected' : ''}>Bekliyor</option>
+                                    <option value="progress" ${s.status === 'progress' ? 'selected' : ''}>İşlemde</option>
+                                    <option value="testing" ${s.status === 'testing' ? 'selected' : ''}>Testte</option>
+                                    <option value="completed" ${s.status === 'completed' ? 'selected' : ''}>Tamamlandı</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `).join('');
         }
 
         // --- PRODUCTS ---
@@ -866,19 +880,19 @@
                 const data = await res.json();
                 const defaultImg = 'https://placehold.co/40';
                 document.getElementById('productsTable').innerHTML = data.map(p => `
-                    <tr>
-                        <td><img src="${p.image || defaultImg}" class="product-img" onerror="this.onerror=null;this.src='${defaultImg}'"></td>
-                        <td><b>${p.title}</b></td>
-                        <td><span class="badge badge-info">${p.category}</span></td>
-                        <td>${p.brand}</td>
-                        <td>${formatPrice(p.price)}</td>
-                        <td>${p.stock}</td>
-                        <td>
-                            <button onclick="openProductModal(${p.id})" style="color:#f59e0b; border:none; background:none; cursor:pointer; margin-right:8px;"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteProduct(${p.id})" style="color:#ef4444; border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
+                        <tr>
+                            <td><img src="${p.image || defaultImg}" class="product-img" onerror="this.onerror=null;this.src='${defaultImg}'"></td>
+                            <td><b>${p.title}</b></td>
+                            <td><span class="badge badge-info">${p.category}</span></td>
+                            <td>${p.brand}</td>
+                            <td>${formatPrice(p.price)}</td>
+                            <td>${p.stock}</td>
+                            <td>
+                                <button onclick="openProductModal(${p.id})" style="color:#f59e0b; border:none; background:none; cursor:pointer; margin-right:8px;"><i class="fas fa-edit"></i></button>
+                                <button onclick="deleteProduct(${p.id})" style="color:#ef4444; border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
             } catch (err) { console.error(err); }
         }
 
@@ -952,17 +966,17 @@
                 const res = await fetch('/api/admin/dealers');
                 const data = await res.json();
                 document.getElementById('dealersTable').innerHTML = data.map(d => `
-                    <tr>
-                        <td><span class="badge badge-info">${d.dealerCode}</span></td>
-                        <td><b>${d.fullName}</b></td>
-                        <td>${d.email}</td>
-                        <td>${d.phone}</td>
-                        <td>${formatPrice(d.totalSpend)}</td>
-                        <td>
-                            <button onclick="deleteDealer(${d.id})" style="color:#ef4444; border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
+                        <tr>
+                            <td><span class="badge badge-info">${d.dealerCode}</span></td>
+                            <td><b>${d.fullName}</b></td>
+                            <td>${d.email}</td>
+                            <td>${d.phone}</td>
+                            <td>${formatPrice(d.totalSpend)}</td>
+                            <td>
+                                <button onclick="deleteDealer(${d.id})" style="color:#ef4444; border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
             } catch (err) { console.error(err); }
         }
 
@@ -972,16 +986,95 @@
             loadDealers();
         }
 
-        // --- GLOBAL SETTINGS SAVE MOCK ---
-        function saveSettings() {
-            // Gerçek projede burada API isteği olur: fetch('/api/admin/settings', { method: 'POST', body: ... })
+        // --- SETTINGS (GÜÇLENDİRİLMİŞ VERSİYON) ---
+        let globalCurrency = 'TRY';
+        async function loadSettings() {
+            try {
+                const res = await fetch('/api/settings');
+                if (!res.ok) throw new Error('Ayarlar çekilemedi');
+
+                const data = await res.json();
+                globalCurrency = data.currency || 'TRY';
+                // Inputları doldur
+                document.getElementById('set_PlatformName').value = data.platformName;
+                document.getElementById('set_SupportEmail').value = data.supportEmail;
+                document.getElementById('set_Currency').value = data.currency;
+                document.getElementById('set_SmtpServer').value = data.smtpServer;
+                document.getElementById('set_SmtpPort').value = data.smtpPort;
+                document.getElementById('set_SmtpUser').value = data.smtpUser;
+                document.getElementById('set_SmtpPassword').value = data.smtpPassword;
+                document.getElementById('set_DefaultCreditLimit').value = data.defaultCreditLimit;
+                document.getElementById('set_DefaultTaxRate').value = data.defaultTaxRate;
+
+                // Checkboxları (Switch) doldur
+                document.getElementById('set_MaintenanceMode').checked = data.maintenanceMode;
+                document.getElementById('set_AllowNewDealers').checked = data.allowNewDealers;
+                document.getElementById('set_EnforceStrongPassword').checked = data.enforceStrongPassword;
+                
+            } catch (err) {
+                console.error(err);
+                alert('Ayarlar yüklenirken bir hata oluştu.');
+            }
+        }
+
+        async function saveSettings() {
             const btn = document.querySelector('#settings-section .btn-primary');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
-            setTimeout(() => {
-                alert('Sistem ayarları başarıyla güncellendi ve önbellek temizlendi.');
+            btn.disabled = true;
+
+            // Helper: Güvenli Dönüşüm (Boş ise 0 döndür)
+            const getInt = (id) => {
+                const val = document.getElementById(id).value;
+                return val ? parseInt(val) : 0;
+            };
+            const getFloat = (id) => {
+                const val = document.getElementById(id).value;
+                return val ? parseFloat(val) : 0.0;
+            };
+
+            const settingsData = {
+                platformName: document.getElementById('set_PlatformName').value || "",
+                supportEmail: document.getElementById('set_SupportEmail').value || "",
+                currency: document.getElementById('set_Currency').value || "TRY",
+
+                maintenanceMode: document.getElementById('set_MaintenanceMode').checked,
+                allowNewDealers: document.getElementById('set_AllowNewDealers').checked,
+                enforceStrongPassword: document.getElementById('set_EnforceStrongPassword').checked,
+
+                smtpServer: document.getElementById('set_SmtpServer').value || "",
+                smtpPort: getInt('set_SmtpPort'), // Güvenli
+                smtpUser: document.getElementById('set_SmtpUser').value || "",
+                smtpPassword: document.getElementById('set_SmtpPassword').value || "",
+
+                defaultCreditLimit: getFloat('set_DefaultCreditLimit'), // Güvenli
+                defaultTaxRate: getInt('set_DefaultTaxRate') // Güvenli
+            };
+
+            try {
+                const res = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settingsData)
+                });
+
+                if (res.ok) {
+                    alert('Ayarlar başarıyla güncellendi! Değişiklikler için sayfayı yenileyebilirsiniz.');
+                    // Kaydettikten sonra başlığı anında güncelle
+                    document.title = settingsData.platformName + " - Yönetim Paneli";
+                    document.getElementById('lbl_PlatformName').innerText = settingsData.platformName;
+                } else {
+                    const errData = await res.json();
+                    console.error("Sunucu Hatası:", errData);
+                    alert('Kaydetme başarısız! Konsolu kontrol et.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Bir bağlantı hatası oluştu.');
+            } finally {
                 btn.innerHTML = originalText;
-            }, 1000);
+                btn.disabled = false;
+            }
         }
 
         // --- ACTIONS ---
@@ -993,8 +1086,8 @@
             const res = await fetch(`/api/admin/ticket/${id}`);
             const data = await res.json();
             document.getElementById('chatMessages').innerHTML = data.messages.map(m => `
-                    <div class="msg ${m.isAgent ? 'msg-out' : 'msg-in'}">${m.message}<span class="msg-time">${m.time}</span></div>
-                `).join('');
+                        <div class="msg ${m.isAgent ? 'msg-out' : 'msg-in'}">${m.message}<span class="msg-time">${m.time}</span></div>
+                    `).join('');
         }
 
         async function sendReply() {
@@ -1030,7 +1123,29 @@
 
         function logout() { localStorage.clear(); window.location.href = 'login.html'; }
 
-        document.addEventListener('DOMContentLoaded', loadDashboard);
+        // --- SAYFA AÇILIRKEN ÇALIŞACAK KISIM (YENİ) ---
+        document.addEventListener('DOMContentLoaded', async function () {
+            // 1. Dashboard'ı yükle
+            loadDashboard();
+
+            // 2. Ayarları çekip Logo ve Başlığı güncelle
+            try {
+                const res = await fetch('/api/settings');
+                if (res.ok) {
+                    const settings = await res.json();
+
+                    // Tarayıcı sekme başlığını güncelle
+                    document.title = settings.platformName + " - Yönetim Paneli";
+
+                    // Logo metnini güncelle
+                    const logoEl = document.getElementById('lbl_PlatformName');
+                    if (logoEl) logoEl.textContent = settings.platformName;
+                }
+            } catch (err) {
+                console.error("Platform adı yüklenemedi:", err);
+            }
+        });
+
     </script>
 </body>
 </html>
