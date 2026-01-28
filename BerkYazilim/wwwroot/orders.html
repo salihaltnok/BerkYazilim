@@ -696,10 +696,10 @@
         </nav>
         <div class="sidebar-footer">
             <div class="user-info">
-                <div class="user-avatar" style="background:linear-gradient(135deg,#3b82f6,#10b981);">BY</div>
-                <div class="user-details">
-                    <div class="user-name">BERK YAZILIM</div>
-                    <div class="user-role">BAYI-2025-001</div>
+                <div class="user-avatar" id="commonSidebarAvatar">...</div>
+                <div>
+                    <div class="user-name" id="sidebarUserName">Yükleniyor...</div>
+                    <div class="user-role" id="sidebarDealerCode">...</div>
                 </div>
             </div>
         </div>
@@ -997,7 +997,41 @@
 
             renderOrders(filtered);
         }
+        // --- SIDEBAR KULLANICI BİLGİLERİNİ GÜNCELLEME ---
+        async function loadSidebarProfile() {
+            const userId = localStorage.getItem('user_id');
+            if (!userId) {
+                // Kullanıcı giriş yapmamışsa login'e yönlendir veya varsayılan bırak
+                return;
+            }
 
+            try {
+                // Hesabım sayfasındaki aynı API'yi kullanıyoruz
+                const res = await fetch(`/api/profile/${userId}`);
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                // 1. İsim ve Bayi Kodunu Yaz
+                const nameEl = document.getElementById('sidebarUserName');
+                const codeEl = document.getElementById('sidebarDealerCode');
+
+                if (nameEl) nameEl.innerText = data.fullName;
+                if (codeEl) codeEl.innerText = data.dealerCode;
+
+                // 2. Avatarı (Baş Harfleri) Oluştur
+                const avatarEl = document.getElementById('commonSidebarAvatar');
+                if (avatarEl && data.fullName) {
+                    const names = data.fullName.split(' ');
+                    let initials = names[0][0];
+                    if (names.length > 1) initials += names[names.length - 1][0];
+                    avatarEl.innerText = initials.toUpperCase();
+                }
+
+            } catch (err) {
+                console.error("Sidebar bilgileri yüklenemedi:", err);
+            }
+        }
         // --- İSTATİSTİK GÜNCELLEME ---
         function updateStats() {
             if (!orders || orders.length === 0) {
@@ -1043,6 +1077,7 @@
         // --- BAŞLAT ---
         document.addEventListener('DOMContentLoaded', () => {
             fetchOrders();
+            loadSidebarProfile();
 
             // Event Listener'lar
             document.getElementById('searchInput').addEventListener('input', applyFilters);

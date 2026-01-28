@@ -483,10 +483,10 @@
         </nav>
         <div class="sidebar-footer">
             <div class="user-info">
-                <div class="user-avatar">AB</div>
+                <div class="user-avatar" id="commonSidebarAvatar">...</div>
                 <div>
-                    <div class="user-name">Ahmet Bilişim</div>
-                    <div class="user-role">BAYI-2025-001</div>
+                    <div class="user-name" id="sidebarUserName">Yükleniyor...</div>
+                    <div class="user-role" id="sidebarDealerCode">...</div>
                 </div>
             </div>
         </div>
@@ -588,7 +588,41 @@
     <script>
         function formatPrice(p) { return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(p); }
         function formatDate(d) { return new Date(d).toLocaleDateString('tr-TR'); }
+        // --- SIDEBAR KULLANICI BİLGİLERİNİ GÜNCELLEME ---
+        async function loadSidebarProfile() {
+            const userId = localStorage.getItem('user_id');
+            if (!userId) {
+                // Kullanıcı giriş yapmamışsa login'e yönlendir veya varsayılan bırak
+                return;
+            }
 
+            try {
+                // Hesabım sayfasındaki aynı API'yi kullanıyoruz
+                const res = await fetch(`/api/profile/${userId}`);
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                // 1. İsim ve Bayi Kodunu Yaz
+                const nameEl = document.getElementById('sidebarUserName');
+                const codeEl = document.getElementById('sidebarDealerCode');
+
+                if (nameEl) nameEl.innerText = data.fullName;
+                if (codeEl) codeEl.innerText = data.dealerCode;
+
+                // 2. Avatarı (Baş Harfleri) Oluştur
+                const avatarEl = document.getElementById('commonSidebarAvatar');
+                if (avatarEl && data.fullName) {
+                    const names = data.fullName.split(' ');
+                    let initials = names[0][0];
+                    if (names.length > 1) initials += names[names.length - 1][0];
+                    avatarEl.innerText = initials.toUpperCase();
+                }
+
+            } catch (err) {
+                console.error("Sidebar bilgileri yüklenemedi:", err);
+            }
+        }
         function showToast(msg) {
             const c = document.getElementById('toastContainer');
             const t = document.createElement('div');
@@ -672,6 +706,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', fetchFinanceData);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mevcut fonksiyonlarınız burada kalabilir (örn: fetchCart, fetchOrders vb.)
+            loadSidebarProfile(); // <-- BU SATIRI MUTLAKA EKLEYİN
+        });
     </script>
 </body>
 </html>

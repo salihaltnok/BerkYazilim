@@ -607,17 +607,25 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="sidebar-header"><a href="index.html" class="logo"><div class="logo-icon">🚀</div><div class="logo-text">B2B Portal</div></a></div>
+        <div class="sidebar-header"><a href="dashboard.html" class="logo"><div class="logo-icon">🚀</div><div class="logo-text">B2B Portal</div></a></div>
         <nav class="sidebar-menu">
             <div class="menu-section">Ana Menü</div>
-            <a href="index.html" class="menu-item"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
+            <a href="dashboard.html" class="menu-item"><i class="fas fa-home menu-icon"></i><span>Ana Sayfa</span></a>
             <a href="products.html" class="menu-item"><i class="fas fa-box menu-icon"></i><span>Ürünler</span></a>
             <a href="cart.html" class="menu-item"><i class="fas fa-shopping-cart menu-icon"></i><span>Sepetim</span><span class="menu-badge" id="cartCount">0</span></a>
             <div class="menu-section">Hesap</div>
             <a href="profile.html" class="menu-item active"><i class="fas fa-user menu-icon"></i><span>Hesabım</span></a>
             <a href="#" class="menu-item" onclick="logout()"><i class="fas fa-sign-out-alt menu-icon"></i><span>Çıkış Yap</span></a>
         </nav>
-        <div class="sidebar-footer"><div class="user-info"><div class="user-avatar"></div><div><div class="user-name" id="sidebarUserName">Yükleniyor...</div><div class="user-role" id="sidebarDealerCode">...</div></div></div></div>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="commonSidebarAvatar">...</div>
+                <div>
+                    <div class="user-name" id="sidebarUserName">Yükleniyor...</div>
+                    <div class="user-role" id="sidebarDealerCode">...</div>
+                </div>
+            </div>
+        </div>
     </aside>
 
     <main class="main-content">
@@ -879,6 +887,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', fetchProfile);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mevcut fonksiyonlarınız burada kalabilir (örn: fetchCart, fetchOrders vb.)
+            loadSidebarProfile(); // <-- BU SATIRI MUTLAKA EKLEYİN
+        });
     </script>
 </body>
 </html>
