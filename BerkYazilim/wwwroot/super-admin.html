@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Creator Panel - Berk Yazılım</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            background: linear-gradient(to right, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tenant-card {
+            background: #141824;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .tenant-card.passive {
+                opacity: 0.6;
+                border-color: #ef4444;
+            }
+
+        .tenant-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .tenant-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .tenant-code {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .label {
+            color: #64748b;
+        }
+
+        .val {
+            font-weight: 600;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-login {
+            background: #3b82f6;
+            color: white;
+            grid-column: span 2;
+        }
+
+            .btn-login:hover {
+                background: #2563eb;
+            }
+
+        .btn-toggle {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+            .btn-toggle:hover {
+                background: rgba(255,255,255,0.2);
+            }
+
+        .btn-extend {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+        }
+
+            .btn-extend:hover {
+                background: rgba(16,185,129,0.3);
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BERK YAZILIM CREATOR</h1>
+            <button onclick="logout()" style="background:#ef4444; color:white;">Çıkış</button>
+        </div>
+
+        <div class="card-grid" id="tenantGrid">
+        </div>
+    </div>
+
+    <script>
+        // Sadece SuperAdmin girebilir kontrolü
+        const userRole = localStorage.getItem('user_role');
+        /* Geliştirme aşamasında bu kontrolü kapalı tutabilirsin,
+           canlıya alırken açmalısın.
+        if (userRole !== 'SuperAdmin') {
+            window.location.href = 'login.html';
+        }
+        */
+
+        async function loadTenants() {
+            try {
+                const res = await fetch('/api/superadmin/tenants');
+                const tenants = await res.json();
+
+                const grid = document.getElementById('tenantGrid');
+                grid.innerHTML = tenants.map(t => {
+                    const isExpired = new Date(t.subscriptionEndDate) < new Date();
+                    const statusColor = t.isActive ? '#10b981' : '#ef4444';
+
+                    return `
+                    <div class="tenant-card ${!t.isActive ? 'passive' : ''}">
+                        <div class="tenant-header">
+                            <div>
+                                <div class="tenant-name">${t.fullName}</div>
+                                <div class="tenant-code">${t.dealerCode}</div>
+                            </div>
+                            <div style="width:12px; height:12px; border-radius:50%; background:${statusColor}; box-shadow:0 0 10px ${statusColor}"></div>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="label">Bitiş:</span>
+                            <span class="val" style="${isExpired ? 'color:#ef4444' : ''}">${new Date(t.subscriptionEndDate).toLocaleDateString()}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Telefon:</span>
+                            <span class="val">${t.phone || '-'}</span>
+                        </div>
+
+                        <div class="actions">
+                            <button class="btn-login" onclick="impersonate(${t.id})"><i class="fas fa-mask"></i> Yönetici Olarak Gir</button>
+                            <button class="btn-toggle" onclick="toggleStatus(${t.id})">
+                                ${t.isActive ? 'Pasife Al' : 'Aktif Et'}
+                            </button>
+                            <button class="btn-extend" onclick="extend(${t.id})">+1 Yıl</button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+            } catch(err) { console.error(err); }
+        }
+
+        async function impersonate(userId) {
+            try {
+                const res = await fetch('/api/auth/impersonate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(userId)
+                });
+
+                if(res.ok) {
+                    const data = await res.json();
+
+                    // Mevcut oturumu sil ve yeni (taklit edilen) oturumu kaydet
+                    localStorage.setItem('user_token', data.token);
+                    localStorage.setItem('user_id', data.bayi.id);
+                    localStorage.setItem('user_name', data.bayi.ad);
+                    localStorage.setItem('dealer_code', data.bayi.kod);
+                    localStorage.setItem('user_role', data.bayi.rol);
+
+                    // Admin paneline ışınlan
+                    window.location.href = 'admin.html';
+                }
+            } catch(err) { alert('Giriş yapılamadı'); }
+        }
+
+        async function toggleStatus(id) {
+            await fetch(`/api/superadmin/toggle-status/${id}`, { method: 'POST' });
+            loadTenants();
+        }
+
+        async function extend(id) {
+            if(confirm('Süre 1 yıl uzatılacak?')) {
+                await fetch(`/api/superadmin/extend-subscription/${id}`, { method: 'POST' });
+                loadTenants();
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        loadTenants();
+    </script>
+</body>
+</html>

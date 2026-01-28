@@ -20,7 +20,7 @@ namespace BerkYazilim.Controllers
         // ==========================================
         // 1. DASHBOARD & İSTATİSTİKLER
         // ==========================================
-        [HttpGet("dashboard-stats")] // Frontend'de bu endpoint kullanılıyor
+        [HttpGet("dashboard-stats")]
         public async Task<IActionResult> GetDashboardStats()
         {
             var totalRevenue = await _context.Orders.SumAsync(o => o.TotalAmount);
@@ -28,7 +28,6 @@ namespace BerkYazilim.Controllers
             var pendingOrders = await _context.Orders.CountAsync(o => o.Status == "Pending" || o.Status == "Beklemede");
             var totalProducts = await _context.Products.CountAsync();
 
-            // Ekstra İstatistikler (Yeni eklenen modüller için)
             var openTickets = await _context.SupportTickets.CountAsync(t => t.Status == "Open");
             var pendingServices = await _context.ServiceRequests.CountAsync(s => s.Status == "waiting");
 
@@ -64,7 +63,7 @@ namespace BerkYazilim.Controllers
                     u.Email,
                     u.Phone,
                     u.Address,
-                    u.CreditLimit, // <-- YENİ: Limiti de listeye ekledik
+                    u.CreditLimit,
                     OrderCount = _context.Orders.Count(o => o.User.Id == u.Id),
                     TotalSpend = _context.Orders.Where(o => o.User.Id == u.Id).Sum(o => o.TotalAmount)
                 })
@@ -76,45 +75,25 @@ namespace BerkYazilim.Controllers
         [HttpPost("dealers")]
         public async Task<IActionResult> CreateDealer([FromBody] User dealer)
         {
-            // --- 1. SİSTEM AYARLARINI ÇEK ---
-            // Veritabanından ayarları okuyoruz
             var settings = await _context.SystemSettings.FirstOrDefaultAsync();
-
-            // Eğer veritabanında ayar yoksa varsayılan boş bir nesne oluştur (Hata almamak için)
             if (settings == null) settings = new SystemSetting();
 
-            // --- 2. AYAR KONTROLÜ: YENİ KAYIT İZNİ ---
-            // Eğer panelden "Yeni Bayi Kaydı" kapatıldıysa işlemi durdur.
             if (!settings.AllowNewDealers)
-            {
                 return BadRequest("Sistem ayarlarında 'Yeni Bayi Kaydı' kapalıdır. Şu an bayi eklenemez.");
-            }
 
-            // --- 3. STANDART KONTROLLER ---
             if (await _context.Users.AnyAsync(u => u.DealerCode == dealer.DealerCode))
                 return BadRequest("Bu bayi kodu zaten kullanılıyor!");
 
             dealer.Role = "Dealer";
-            // Eğer şifre boş geldiyse varsayılanı ata
             if (string.IsNullOrEmpty(dealer.Password)) dealer.Password = "123456";
 
-            // --- 4. AYAR KONTROLÜ: GÜÇLÜ ŞİFRE ---
-            // Eğer panelden "Güçlü Şifre" zorunluluğu açıldıysa kontrol et.
             if (settings.EnforceStrongPassword)
             {
-                // Kural: En az 8 karakter VE en az 1 rakam içermeli
                 if (dealer.Password.Length < 8 || !dealer.Password.Any(char.IsDigit))
-                {
                     return BadRequest("Güvenlik Politikası: Şifre en az 8 karakter olmalı ve en az bir rakam içermelidir.");
-                }
             }
 
-            // --- 5. AYAR KONTROLÜ: VARSAYILAN KREDİ LİMİTİ ---
-            // Eğer admin özel bir limit girmediyse (0 geldiyse), ayarlardaki varsayılan limiti ver.
-            if (dealer.CreditLimit == 0)
-            {
-                dealer.CreditLimit = settings.DefaultCreditLimit;
-            }
+            if (dealer.CreditLimit == 0) dealer.CreditLimit = settings.DefaultCreditLimit;
 
             _context.Users.Add(dealer);
             await _context.SaveChangesAsync();
@@ -170,16 +149,24 @@ namespace BerkYazilim.Controllers
             {
                 order.TrackingNumber = request.TrackingNumber;
             }
-
+            _context.AuditLogs.Add(new AuditLog
+            {
+                UserId = null, // Şimdilik null, çünkü admin ID'sini bu methodda bilmiyoruz (Token decode etmedik)
+                UserName = "Admin/Sistem",
+                Action = "Sipariş Güncelleme",
+                Details = $"Sipariş {order.OrderNumber} durumu '{request.Status}' olarak değiştirildi.",
+                IpAddress = Request.Headers.ContainsKey("X-Forwarded-For")
+    ? Request.Headers["X-Forwarded-For"].ToString()
+    : (HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Bilinmiyor"),
+                Timestamp = DateTime.Now
+            });
             await _context.SaveChangesAsync();
             return Ok(new { message = "Sipariş durumu güncellendi." });
         }
 
         // ==========================================
-        // 4. DESTEK (TICKET) YÖNETİMİ (YENİ)
+        // 4. DESTEK (TICKET) YÖNETİMİ
         // ==========================================
-
-        // Tüm Talepleri Getir
         [HttpGet("tickets")]
         public async Task<IActionResult> GetAllTickets()
         {
@@ -202,7 +189,6 @@ namespace BerkYazilim.Controllers
             return Ok(tickets);
         }
 
-        // Talep Detayı
         [HttpGet("ticket/{ticketNumber}")]
         public async Task<IActionResult> GetTicketDetail(string ticketNumber)
         {
@@ -222,12 +208,11 @@ namespace BerkYazilim.Controllers
                 Messages = ticket.Messages.OrderBy(m => m.SentDate).Select(m => new {
                     m.Message,
                     Time = m.SentDate.ToString("HH:mm"),
-                    m.IsAgent // True=Admin, False=Bayi
+                    m.IsAgent
                 })
             });
         }
 
-        // Admin Cevap Yazıyor
         [HttpPost("ticket/reply")]
         public async Task<IActionResult> ReplyTicket([FromBody] ReplyTicketDto request)
         {
@@ -238,7 +223,7 @@ namespace BerkYazilim.Controllers
             {
                 SupportTicketId = ticket.Id,
                 Message = request.Message,
-                IsAgent = true, // Admin olduğu için True
+                IsAgent = true,
                 SentDate = DateTime.Now
             };
 
@@ -252,10 +237,8 @@ namespace BerkYazilim.Controllers
         }
 
         // ==========================================
-        // 5. TEKNİK SERVİS YÖNETİMİ (YENİ)
+        // 5. TEKNİK SERVİS YÖNETİMİ
         // ==========================================
-
-        // Tüm Servis Taleplerini Getir
         [HttpGet("services")]
         public async Task<IActionResult> GetAllServices()
         {
@@ -266,7 +249,7 @@ namespace BerkYazilim.Controllers
                     s.Id,
                     Code = s.ServiceCode,
                     Dealer = s.User.FullName,
-                    Product = s.ProductName, // Modeldeki isim
+                    Product = s.ProductName,
                     s.Category,
                     s.IssueDescription,
                     s.Status,
@@ -277,7 +260,6 @@ namespace BerkYazilim.Controllers
             return Ok(services);
         }
 
-        // Servis Durumunu Güncelle
         [HttpPost("service/update")]
         public async Task<IActionResult> UpdateServiceStatus([FromBody] UpdateServiceDto request)
         {
@@ -291,9 +273,8 @@ namespace BerkYazilim.Controllers
         }
 
         // ==========================================
-        // 6. ÜRÜN YÖNETİMİ (YENİ EKLENDİ)
+        // 6. ÜRÜN YÖNETİMİ
         // ==========================================
-
         [HttpGet("products")]
         public async Task<IActionResult> GetProducts()
         {
@@ -314,9 +295,9 @@ namespace BerkYazilim.Controllers
         [HttpPost("product")]
         public async Task<IActionResult> AddProduct([FromBody] Product product)
         {
-            // Basit validasyon ve varsayılanlar
-            if (string.IsNullOrEmpty(product.Image))
-                product.Image = "https://via.placeholder.com/150";
+            // DÜZELTME: existingProduct hatası silindi.
+            // product.Image -> product.ImageUrl olarak düzeltildi.
+            if (string.IsNullOrEmpty(product.ImageUrl)) product.ImageUrl = "https://via.placeholder.com/150";
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
@@ -333,7 +314,7 @@ namespace BerkYazilim.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Ürün silindi." });
         }
-        // Düzenleme için Tek Bir Ürünü Getir
+
         [HttpGet("product/{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -342,7 +323,6 @@ namespace BerkYazilim.Controllers
             return Ok(product);
         }
 
-        // Ürünü Güncelle
         [HttpPut("product/{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
         {
@@ -351,19 +331,29 @@ namespace BerkYazilim.Controllers
             var existingProduct = await _context.Products.FindAsync(id);
             if (existingProduct == null) return NotFound("Ürün bulunamadı.");
 
-            // Alanları güncelle
             existingProduct.Title = product.Title;
             existingProduct.Category = product.Category;
             existingProduct.Brand = product.Brand;
             existingProduct.Price = product.Price;
             existingProduct.Stock = product.Stock;
-            existingProduct.Image = product.Image;
-            // Kategori değiştiyse slug'ı da güncellemek gerekebilir veya frontend'den gönderebilirsiniz.
+
+            // DÜZELTME: .Image yerine .ImageUrl kullandık
+            existingProduct.ImageUrl = product.ImageUrl;
 
             await _context.SaveChangesAsync();
             return Ok(new { message = "Ürün güncellendi." });
         }
+        // AdminController.cs içine ekleyin:
+
+        [HttpGet("logs")]
+        public async Task<IActionResult> GetAuditLogs()
+        {
+            var logs = await _context.AuditLogs
+                .OrderByDescending(l => l.Timestamp)
+                .Take(50) // Son 50 işlem
+                .ToListAsync();
+
+            return Ok(logs);
+        }
     }
-
-
 }

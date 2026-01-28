@@ -1,18 +1,27 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BerkYazilim.Models
 {
     public class Payment
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
-        public decimal Amount { get; set; }
-        public string Method { get; set; } // "Kredi Kartı", "Havale", "Çek"
-        public string Description { get; set; } = string.Empty;
-        public string Status { get; set; } = "Pending"; // Pending, Approved
-
-        // Hangi Bayi ödedi?
         public int UserId { get; set; }
-        public User User { get; set; }
+
+        // DÜZELTME: User? (soru işareti) ekledik. Artık nullable.
+        public virtual User? User { get; set; }
+
+        public DateTime Date { get; set; }
+
+        [Range(0.01, double.MaxValue, ErrorMessage = "Ödeme tutarı 0'dan büyük olmalıdır.")]
+        public decimal Amount { get; set; }
+
+        [Required]
+        public string Method { get; set; } = "Havale";
+
+        public string Description { get; set; } = string.Empty;
+
+        public string Status { get; set; } = "Pending";
+
+        public string Type { get; set; } = "Credit";
     }
 }

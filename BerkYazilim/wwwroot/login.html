@@ -538,12 +538,11 @@
             btnText.style.display = 'none';
             btnLoading.style.display = 'inline-block';
 
-            // Form verilerini al
+            // Form verilerini al (Backend'deki LoginRequest.cs ile birebir aynı isimler olmalı)
             const formData = {
-                bayi_kodu: document.getElementById('bayiKodu').value,
-                sifre: document.getElementById('sifre').value
+                DealerCode: document.getElementById('bayiKodu').value,
+                Password: document.getElementById('sifre').value
             };
-
             try {
                 // API'ye istek at
                 const response = await fetch('/api/auth/login', {

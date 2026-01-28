@@ -17,12 +17,24 @@ namespace BerkYazilim.Data
                 // 2. KULLANICILAR (USERS)
                 if (!context.Users.Any())
                 {
+                    // --- CREATOR (SUPER ADMIN - SEN) ---
+                    context.Users.Add(new User
+                    {
+                        DealerCode = "CREATOR",
+                        FullName = "Berk Yazılım Sahibi",
+                        Password = BCrypt.Net.BCrypt.HashPassword("master"),
+                        Role = "SuperAdmin", // Yeni Rolün
+                        Email = "creator@berkyazilim.com",
+                        Address = "Yönetim Merkezi",
+                        IsActive = true,
+                        SubscriptionEndDate = DateTime.MaxValue // Senin süren asla bitmez
+                    });
                     // --- YÖNETİCİ (ADMIN) ---
                     context.Users.Add(new User
                     {
                         DealerCode = "ADMIN",
                         FullName = "Sistem Yöneticisi",
-                        Password = "admin", // Şifre: admin
+                        Password = BCrypt.Net.BCrypt.HashPassword("master"),
                         Role = "Admin",
                         Email = "admin@berkyazilim.com",
                         Address = "Genel Merkez",
@@ -34,7 +46,7 @@ namespace BerkYazilim.Data
                     {
                         DealerCode = "BAYI-2025-001",
                         FullName = "Ahmet Bilişim",
-                        Password = "123", // Şifre: 123
+                        Password = BCrypt.Net.BCrypt.HashPassword("123"),
                         Role = "Dealer",
                         Email = "ahmet@bayi.com",
                         Address = "Teknopark İstanbul, Pendik",

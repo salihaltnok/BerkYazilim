@@ -111,6 +111,17 @@ namespace BerkYazilim.Controllers
 
             // 4. Veritabanına Kaydet
             _context.Orders.Add(order);
+            _context.AuditLogs.Add(new AuditLog
+            {
+                UserId = user.Id,
+                UserName = user.FullName,
+                Action = "Yeni Sipariş",
+                Details = $"Sipariş No: {order.OrderNumber}, Tutar: {order.TotalAmount:C2}",
+                IpAddress = Request.Headers.ContainsKey("X-Forwarded-For")
+    ? Request.Headers["X-Forwarded-For"].ToString()
+    : (HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Bilinmiyor"),
+                Timestamp = DateTime.Now
+            });
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Sipariş başarıyla oluşturuldu!", orderId = order.OrderNumber });

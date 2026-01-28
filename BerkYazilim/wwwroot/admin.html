@@ -439,6 +439,7 @@
             <div class="menu-item" onclick="showSection('products')"><i class="fas fa-box"></i> Ürün Yönetimi</div>
             <div class="menu-item" onclick="showSection('dealers')"><i class="fas fa-users"></i> Bayi Listesi</div>
             <div class="menu-item" onclick="showSection('settings')"><i class="fas fa-cog"></i> Sistem Ayarları</div>
+            <div class="menu-item" onclick="showSection('logs')"><i class="fas fa-history"></i> İşlem Geçmişi</div>
 
             <div class="menu-item" onclick="logout()" style="margin-top:auto; color:#ef4444;"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</div>
         </nav>
@@ -518,9 +519,7 @@
                     <button class="btn-primary" onclick="openProductModal()">
                         <i class="fas fa-plus"></i> Ürün Ekle
                     </button>
-                    <button class="btn-primary" style="background:#374151;" onclick="window.location.href='admin-products.html'">
-                        <i class="fas fa-external-link-alt"></i> Detaylı Sayfa
-                    </button>
+
                 </div>
             </div>
             <div class="card">
@@ -677,6 +676,34 @@
                 </div>
             </div>
         </div>
+        <div id="logs-section" class="section">
+            <div class="header">
+                <div>
+                    <h1 class="page-title">Sistem İşlem Geçmişi</h1>
+                    <p style="color:var(--text-light); font-size:14px; margin-top:4px;">Sistemde yapılan son kritik işlemler ve güvenlik kayıtları.</p>
+                </div>
+                <button class="btn-primary" onclick="loadLogs()" style="background:#374151;">
+                    <i class="fas fa-sync-alt"></i> Yenile
+                </button>
+            </div>
+
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Kullanıcı</th>
+                            <th>İşlem</th>
+                            <th>Detaylar</th>
+                            <th>IP Adresi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTable">
+                        <tr><td colspan="5" style="text-align:center; padding:20px;">Yükleniyor...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
     </main>
 
@@ -785,6 +812,7 @@
             if (id === 'products') loadProducts();
             if (id === 'dealers') loadDealers();
             if (id === 'settings') loadSettings();
+            if (id === 'logs') loadLogs();
         }
 
         // --- HELPERS ---
@@ -895,7 +923,45 @@
                     `).join('');
             } catch (err) { console.error(err); }
         }
+        // --- LOGLARI ÇEKME FONKSİYONU ---
+        async function loadLogs() {
+            try {
+                const res = await fetch('/api/admin/logs');
+                if (!res.ok) throw new Error("Loglar çekilemedi");
 
+                const logs = await res.json();
+
+                const tbody = document.getElementById('logsTable');
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#6b7280;">Henüz kayıt bulunmuyor.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = logs.map(log => `
+            <tr>
+                <td style="font-size:13px; color:#6b7280;">
+                    ${new Date(log.timestamp).toLocaleString('tr-TR')}
+                </td>
+                <td>
+                    <span style="font-weight:600; color:#111827;">${log.userName || 'Sistem'}</span>
+                </td>
+                <td>
+                    <span class="badge badge-info">${log.action}</span>
+                </td>
+                <td style="font-size:13px; color:#374151;">
+                    ${log.details}
+                </td>
+                <td style="font-family:monospace; font-size:12px; color:#6b7280;">
+                    ${log.ipAddress}
+                </td>
+            </tr>
+        `).join('');
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('logsTable').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Loglar yüklenirken hata oluştu.</td></tr>';
+            }
+        }
         async function handleProductSubmit(e) {
             e.preventDefault();
             const id = document.getElementById('pId').value;

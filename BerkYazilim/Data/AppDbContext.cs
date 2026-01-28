@@ -19,6 +19,7 @@ namespace BerkYazilim.Data
         public DbSet<SupportMessage> SupportMessages { get; set; }
         public DbSet<FAQ> FAQs { get; set; }
         public DbSet<SystemSetting> SystemSettings { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -1,20 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BerkYazilim.Models
 {
     public class CreateOrderRequest
     {
-        // "internal" kelimesini sildik, artık dışarıdan veri alabilir
-        public string DealerCode { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Bayi kodu zorunludur.")]
+        public string DealerCode { get; set; } = string.Empty; // <-- Hatayı çözen satır bu
 
-        public List<CartItemDto> Items { get; set; } = new List<CartItemDto>();
+        [Required]
+        [MinLength(1, ErrorMessage = "Sepette en az 1 ürün olmalıdır.")]
+        public List<OrderItemDto> Items { get; set; } = new();
     }
 
-    public class CartItemDto
+    public class OrderItemDto
     {
+        [Required]
         public int ProductId { get; set; }
+
+        [Range(1, 1000, ErrorMessage = "Sipariş adedi en az 1 olmalıdır.")]
         public int Quantity { get; set; }
-        // Buradaki DealerCode'a gerek yok aslında ama kalsın zararı yok
-        public string DealerCode { get; set; } = string.Empty;
     }
 }

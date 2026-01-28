@@ -1,13 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BerkYazilim.Models
 {
     public class LoginRequest
     {
-        [JsonPropertyName("bayi_kodu")]
+        [Required(ErrorMessage = "Bayi kodu girmediniz.")]
         public string DealerCode { get; set; } = string.Empty;
 
-        [JsonPropertyName("sifre")]
+        [Required(ErrorMessage = "Şifre girmediniz.")]
         public string Password { get; set; } = string.Empty;
     }
 }

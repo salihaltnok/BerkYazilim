@@ -68,19 +68,21 @@ namespace BerkYazilim.Controllers
             return Ok(new { message = "Profil bilgileri başarıyla güncellendi." });
         }
 
-        // PUT: api/profile/5/update-password <-- ID'yi URL'den alıyoruz
         [HttpPut("{id}/update-password")]
         public async Task<IActionResult> UpdatePassword(int id, [FromBody] ChangePasswordRequest request)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound("Kullanıcı bulunamadı.");
 
-            if (user.Password != request.OldPassword)
+            // 1. Eski şifre doğru mu? (Verify ile kontrol et)
+            if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.Password))
             {
                 return BadRequest("Mevcut şifreniz hatalı!");
             }
 
-            user.Password = request.NewPassword;
+            // 2. Yeni şifreyi hashleyerek kaydet
+            user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Şifreniz başarıyla güncellendi." });
