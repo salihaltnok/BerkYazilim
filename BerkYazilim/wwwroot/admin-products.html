@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* --- ADMIN.HTML İLE AYNI CSS YAPISI --- */
         :root {
             --primary: #4f46e5;
             --primary-dark: #4338ca;
@@ -17,6 +18,7 @@
             --border: #e5e7eb;
             --danger: #ef4444;
             --success: #10b981;
+            --warning: #f59e0b;
         }
 
         * {
@@ -33,7 +35,7 @@
             min-height: 100vh;
         }
 
-        /* SIDEBAR (Aynı) */
+        /* SIDEBAR - GÖRÜNÜM EŞİTLENDİ */
         .sidebar {
             width: 260px;
             background: #1f2937;
@@ -42,6 +44,7 @@
             flex-direction: column;
             position: fixed;
             height: 100vh;
+            z-index: 1000;
         }
 
         .logo {
@@ -61,8 +64,10 @@
         .menu {
             flex: 1;
             padding: 20px 0;
+            overflow-y: auto;
         }
 
+        /* Link yapısı admin.html ile uyumlu hale getirildi */
         .menu-item {
             padding: 12px 24px;
             display: flex;
@@ -73,12 +78,18 @@
             transition: 0.2s;
             font-size: 14px;
             border-left: 4px solid transparent;
+            cursor: pointer;
         }
 
             .menu-item:hover, .menu-item.active {
                 background: #111827;
                 color: #fff;
                 border-left: 4px solid var(--primary);
+            }
+
+            .menu-item i {
+                width: 20px;
+                text-align: center;
             }
 
         /* MAIN CONTENT */
@@ -98,8 +109,10 @@
         .page-title {
             font-size: 24px;
             font-weight: 700;
+            color: #111827;
         }
 
+        /* BUTTONS */
         .btn {
             padding: 10px 20px;
             border-radius: 8px;
@@ -131,7 +144,16 @@
                 background: #dc2626;
             }
 
-        /* TABLE STYLE */
+        .btn-warning {
+            background: var(--warning);
+            color: #fff;
+        }
+
+            .btn-warning:hover {
+                background: #d97706;
+            }
+
+        /* TABLE */
         .card {
             background: var(--bg-card);
             border-radius: 12px;
@@ -159,6 +181,7 @@
             padding: 16px 24px;
             border-bottom: 1px solid var(--border);
             vertical-align: middle;
+            color: #374151;
         }
 
         tr:hover {
@@ -173,7 +196,7 @@
             border: 1px solid var(--border);
         }
 
-        /* MODAL STYLE */
+        /* MODAL */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -243,17 +266,22 @@
         <div class="logo"><i class="fas fa-layer-group"></i> BerkYazilim <span>Admin</span></div>
         <nav class="menu">
             <a href="admin.html" class="menu-item"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="#" class="menu-item"><i class="fas fa-users"></i> Bayiler</a>
-            <a href="admin-products.html" class="menu-item active"><i class="fas fa-box"></i> Ürün Yönetimi</a>
-            <a href="admin-orders.html" class="menu-item"><i class="fas fa-shopping-cart"></i> Siparişler</a>
-            <a href="login.html" class="menu-item" style="margin-top:auto; color:#ef4444;"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+
+            <a href="admin.html" class="menu-item"><i class="fas fa-headset"></i> Destek Talepleri</a>
+            <a href="admin.html" class="menu-item"><i class="fas fa-tools"></i> Teknik Servis</a>
+
+            <div class="menu-item active"><i class="fas fa-box"></i> Ürün Yönetimi</div>
+
+            <a href="admin-dealers.html" class="menu-item"><i class="fas fa-users"></i> Bayi Listesi</a>
+
+            <div class="menu-item" onclick="logout()" style="margin-top:auto; color:#ef4444;"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</div>
         </nav>
     </aside>
 
     <main class="main">
         <div class="header">
             <h1 class="page-title">Ürün Yönetimi</h1>
-            <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Yeni Ürün Ekle</button>
+            <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Yeni Ürün Ekle</button>
         </div>
 
         <div class="card">
@@ -278,10 +306,11 @@
     <div class="modal-overlay" id="productModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title">Yeni Ürün Ekle</h3>
+                <h3 class="modal-title" id="modalTitle">Yeni Ürün Ekle</h3>
                 <button onclick="closeModal()" style="background:none; border:none; cursor:pointer; font-size:18px;">&times;</button>
             </div>
-            <form id="addProductForm" onsubmit="handleAddProduct(event)">
+            <form id="productForm" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="pId">
                 <div class="form-group">
                     <label class="form-label">Ürün Başlığı</label>
                     <input type="text" class="form-input" id="pTitle" required placeholder="Örn: iPhone 15 Pro Max">
@@ -319,106 +348,153 @@
                 </div>
                 <div style="text-align:right; margin-top:20px;">
                     <button type="button" class="btn" style="background:#e5e7eb; color:#374151; margin-right:8px;" onclick="closeModal()">İptal</button>
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Kaydet</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // --- ÜRÜNLERİ LİSTELE ---
+        // --- 1. ÜRÜNLERİ LİSTELE ---
         async function fetchProducts() {
             try {
-                const res = await fetch('/api/products');
-                const products = await res.json();
-
-                const tbody = document.getElementById('productsTableBody');
-                if(products.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Ürün bulunamadı.</td></tr>';
+                const res = await fetch('/api/admin/products');
+                if (!res.ok) {
+                    console.error("Veri çekilemedi");
                     return;
                 }
 
+                const products = await res.json();
+                const tbody = document.getElementById('productsTableBody');
+
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Henüz ürün eklenmemiş.</td></tr>';
+                    return;
+                }
+
+                const defaultImg = 'https://placehold.co/40';
+
                 tbody.innerHTML = products.map(p => `
-                    <tr>
-                        <td><img src="${p.imageUrl || 'https://via.placeholder.com/40'}" class="product-img"></td>
-                        <td style="font-weight:600;">${p.title}</td>
-                        <td><span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:10px; font-size:12px;">${p.category}</span></td>
-                        <td>₺${p.price.toLocaleString('tr-TR')}</td>
-                        <td>${p.stock} adet</td>
-                        <td style="text-align:right;">
-                            <button onclick="deleteProduct(${p.id})" class="btn btn-danger" style="padding:6px 12px; font-size:12px;"><i class="fas fa-trash"></i> Sil</button>
-                        </td>
-                    </tr>
-                `).join('');
+                        <tr>
+                            <td>
+                                <img src="${p.image || defaultImg}"
+                                     class="product-img"
+                                     alt="Ürün"
+                                     onerror="this.onerror=null;this.src='${defaultImg}'">
+                            </td>
+                            <td style="font-weight:600;">${p.title}</td>
+                            <td><span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:10px; font-size:12px;">${p.category}</span></td>
+                            <td>₺${p.price ? p.price.toLocaleString('tr-TR') : 0}</td>
+                            <td>${p.stock} adet</td>
+                            <td style="text-align:right;">
+                                <button onclick="openEditModal(${p.id})" class="btn btn-warning" style="padding:6px 12px; font-size:12px; margin-right:5px;">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </button>
+                                <button onclick="deleteProduct(${p.id})" class="btn btn-danger" style="padding:6px 12px; font-size:12px;">
+                                    <i class="fas fa-trash"></i> Sil
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
 
             } catch (err) {
                 console.error(err);
+                document.getElementById('productsTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:red;">Hata oluştu.</td></tr>';
             }
         }
 
-        // --- ÜRÜN EKLE ---
-        async function handleAddProduct(e) {
+        // --- 2. MODAL İŞLEMLERİ ---
+        function openAddModal() {
+            document.getElementById('productForm').reset();
+            document.getElementById('pId').value = "";
+            document.getElementById('modalTitle').innerText = "Yeni Ürün Ekle";
+            document.getElementById('saveBtn').innerText = "Kaydet";
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        async function openEditModal(id) {
+            try {
+                const res = await fetch(`/api/admin/product/${id}`);
+                if (!res.ok) { alert('Ürün bilgileri alınamadı.'); return; }
+                const p = await res.json();
+
+                document.getElementById('pId').value = p.id;
+                document.getElementById('pTitle').value = p.title;
+                document.getElementById('pCategory').value = p.category;
+                document.getElementById('pBrand').value = p.brand;
+                document.getElementById('pPrice').value = p.price;
+                document.getElementById('pStock').value = p.stock;
+                document.getElementById('pImg').value = p.image;
+
+                document.getElementById('modalTitle').innerText = "Ürün Düzenle";
+                document.getElementById('saveBtn').innerText = "Güncelle";
+                document.getElementById('productModal').classList.add('show');
+            } catch (err) { console.error(err); alert("Bağlantı hatası"); }
+        }
+
+        function closeModal() { document.getElementById('productModal').classList.remove('show'); }
+
+        // --- 3. FORM GÖNDERME ---
+        async function handleFormSubmit(e) {
             e.preventDefault();
-
-            // Kategori Slug oluşturucu (Basit)
+            const id = document.getElementById('pId').value;
+            const isEdit = id ? true : false;
             const cat = document.getElementById('pCategory').value;
-            const slug = cat.toLowerCase().replace(/ /g, '-').replace(/ı/g, 'i').replace(/ş/g, 's');
+            const slug = cat.toLowerCase().replace(/ /g, '-').replace(/ı/g, 'i').replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c');
 
-            const newProduct = {
+            const productData = {
+                id: isEdit ? parseInt(id) : 0,
                 title: document.getElementById('pTitle').value,
                 category: cat,
                 categorySlug: slug,
                 brand: document.getElementById('pBrand').value,
                 price: parseFloat(document.getElementById('pPrice').value),
                 stock: parseInt(document.getElementById('pStock').value),
-                imageUrl: document.getElementById('pImg').value,
-                // Varsayılanlar
+                image: document.getElementById('pImg').value,
                 oldPrice: parseFloat(document.getElementById('pPrice').value) * 1.1,
-                isNew: true,
+                isNew: !isEdit,
                 isHot: false,
                 specs: "Standart Özellikler",
                 stockLocations: "Merkez Depo"
             };
 
             try {
-                const res = await fetch('/api/products', {
-                    method: 'POST',
+                let url = isEdit ? `/api/admin/product/${id}` : '/api/admin/product';
+                let method = isEdit ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newProduct)
+                    body: JSON.stringify(productData)
                 });
 
-                if(res.ok) {
-                    alert('Ürün eklendi!');
+                if (res.ok) {
+                    alert(isEdit ? 'Ürün güncellendi!' : 'Ürün eklendi!');
                     closeModal();
-                    fetchProducts(); // Listeyi yenile
-                    document.getElementById('addProductForm').reset();
+                    fetchProducts();
                 } else {
-                    alert('Hata oluştu!');
+                    const txt = await res.text();
+                    alert('Hata: ' + txt);
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); alert('Sunucu hatası!'); }
         }
 
-        // --- ÜRÜN SİL ---
+        // --- 4. SİLME ---
         async function deleteProduct(id) {
-            if(!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
-
+            if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
             try {
-                const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-                if(res.ok) {
-                    fetchProducts(); // Listeyi yenile
-                } else {
-                    alert('Silinemedi!');
-                }
+                const res = await fetch(`/api/admin/product/${id}`, { method: 'DELETE' });
+                if (res.ok) fetchProducts();
+                else alert('Silinemedi.');
             } catch (err) { console.error(err); }
         }
 
-        // MODAL FONKSİYONLARI
-        function openModal() { document.getElementById('productModal').classList.add('show'); }
-        function closeModal() { document.getElementById('productModal').classList.remove('show'); }
+        // ÇIKIŞ
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
 
-        // BAŞLAT
         document.addEventListener('DOMContentLoaded', fetchProducts);
     </script>
 </body>

@@ -298,6 +298,36 @@ namespace BerkYazilim.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Ürün silindi." });
         }
+        // Düzenleme için Tek Bir Ürünü Getir
+        [HttpGet("product/{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return NotFound("Ürün bulunamadı.");
+            return Ok(product);
+        }
+
+        // Ürünü Güncelle
+        [HttpPut("product/{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
+        {
+            if (id != product.Id) return BadRequest("ID uyuşmazlığı.");
+
+            var existingProduct = await _context.Products.FindAsync(id);
+            if (existingProduct == null) return NotFound("Ürün bulunamadı.");
+
+            // Alanları güncelle
+            existingProduct.Title = product.Title;
+            existingProduct.Category = product.Category;
+            existingProduct.Brand = product.Brand;
+            existingProduct.Price = product.Price;
+            existingProduct.Stock = product.Stock;
+            existingProduct.Image = product.Image;
+            // Kategori değiştiyse slug'ı da güncellemek gerekebilir veya frontend'den gönderebilirsiniz.
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Ürün güncellendi." });
+        }
     }
 
 
