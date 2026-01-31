@@ -35,7 +35,8 @@ namespace BerkYazilim.Controllers
                 .Include(o => o.User)
                 .OrderByDescending(o => o.OrderDate)
                 .Take(5)
-                .Select(o => new {
+                .Select(o => new
+                {
                     id = o.OrderNumber,
                     dealer = o.User.FullName,
                     date = o.OrderDate,
@@ -138,6 +139,8 @@ namespace BerkYazilim.Controllers
             return Ok(orders);
         }
 
+        //buraya başka şeyler eklenecek........
+
         [HttpPut("orders/{orderNumber}/status")]
         public async Task<IActionResult> UpdateOrderStatus(string orderNumber, [FromBody] UpdateStatusRequest request)
         {
@@ -174,7 +177,8 @@ namespace BerkYazilim.Controllers
                 .Include(t => t.User)
                 .Include(t => t.Messages)
                 .OrderByDescending(t => t.LastUpdate)
-                .Select(t => new {
+                .Select(t => new
+                {
                     t.Id,
                     t.TicketNumber,
                     Dealer = t.User.FullName,
@@ -205,7 +209,8 @@ namespace BerkYazilim.Controllers
                 ticket.Subject,
                 Dealer = ticket.User.FullName,
                 ticket.Status,
-                Messages = ticket.Messages.OrderBy(m => m.SentDate).Select(m => new {
+                Messages = ticket.Messages.OrderBy(m => m.SentDate).Select(m => new
+                {
                     m.Message,
                     Time = m.SentDate.ToString("HH:mm"),
                     m.IsAgent
@@ -245,7 +250,8 @@ namespace BerkYazilim.Controllers
             var services = await _context.ServiceRequests
                 .Include(s => s.User)
                 .OrderByDescending(s => s.CreatedDate)
-                .Select(s => new {
+                .Select(s => new
+                {
                     s.Id,
                     Code = s.ServiceCode,
                     Dealer = s.User.FullName,
@@ -280,7 +286,8 @@ namespace BerkYazilim.Controllers
         {
             var products = await _context.Products
                 .OrderByDescending(p => p.Id)
-                .Select(p => new {
+                .Select(p => new
+                {
                     p.Id,
                     p.Title,
                     p.Category,
@@ -343,6 +350,7 @@ namespace BerkYazilim.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Ürün güncellendi." });
         }
+
         // AdminController.cs içine ekleyin:
 
         [HttpGet("logs")]
